@@ -9,5 +9,6 @@ public class Hexagon extends Polygon {
         super(shapeName, shapeDimension, shapeStyle);
     }
 
-    
+    // For Save XML
+    public Hexagon() {}
 }
