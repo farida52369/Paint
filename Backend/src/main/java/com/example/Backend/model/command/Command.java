@@ -6,7 +6,9 @@ public abstract class Command {
 
     public Singleton singleton = Singleton.getInstance();
 
-    public abstract void redo();
+    public void redo(){
+        execute();
+    }
 
     public abstract void undo();
 

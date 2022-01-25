@@ -14,11 +14,6 @@ public class DeleteCommand extends Command {
     }
 
     @Override
-    public void redo() {
-        execute();
-    }
-
-    @Override
     public void undo() {
         System.out.println("Adding (Undo Deleting) ... " + shape);
         singleton.getAll_shapes().add(shape);

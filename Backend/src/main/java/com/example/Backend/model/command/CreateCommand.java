@@ -14,11 +14,6 @@ public class CreateCommand extends Command {
     }
 
     @Override
-    public void redo() {
-        execute();
-    }
-
-    @Override
     public void undo() {
         System.out.println("Removing Shape (Undo Creating) ...\n" + shape);
         Shape removedShape = singleton.getAll_shapes().stream()

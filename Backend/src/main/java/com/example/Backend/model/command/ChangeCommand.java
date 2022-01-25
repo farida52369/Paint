@@ -17,11 +17,6 @@ public class ChangeCommand extends Command {
     }
 
     @Override
-    public void redo() {
-        execute();
-    }
-
-    @Override
     public void undo() {
         System.out.println("Undo Moving or Resizing Shape ...\n" + shape);
         Shape changedShape = singleton.getAll_shapes().stream()
