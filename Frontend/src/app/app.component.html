@@ -1,0 +1,145 @@
+<!-- main navbar -->
+<nav class="navbar navbar-dark bg-dark navbar-expand-sm">
+  <div class="container-fluid">
+
+    <a class="navbar-brand">
+      <img src="../assets/Images/logo.png" alt="logo" width="50" height="45" class="align-text-bottom">
+      <span class="logo-name">Paint App</span>
+    </a>
+
+    <!--  for small and extra small it will be collapsed  -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav1" 
+      aria-controls="navbarNav1" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="collapse navbar-collapse requirements" id="navbarNav1">
+      <ul class="navbar-nav me-auto items">
+        <li class="nav-item"><a class="nav-link"><span class="fas fa-plus fa-lg">  New</span></a></li>
+        <li class="nav-item"><a class="nav-link"><span class="fas fa-save fa-lg">  Save</span></a></li>
+        <li class="nav-item" (click)="openDrawing()" for="upload">
+          <a class="nav-link"><span class="fas fa-folder-open fa-lg">  Open</span></a>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+
+<!-- second navBar  navbar-secondary bg-secondary-->
+<nav class="navbar navbar-expand-lg navbar-light tools-shapes">
+  <div class="container-fluid">
+    <a class="navbar-brand tools">Tools</a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav2" aria-controls="navbarNav2" 
+    aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav2">
+      <ul class="navbar-nav tools-elements">
+        
+        <li class="nav-item">
+          <a class="nav-link">
+            <label for="fillColorInput">Fill Color: </label>
+            <!-- 
+              #fillColor for getting the value of the input  
+              (change)="specificFunction()" The value to be updated after clicking enter 
+            -->
+            <input type="color" id="fillColorInput" name="fillColorInput" value="#bd65e6" #fillColor (change)="setFillColor(fillColor.value)">
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link">
+            <label for="lineColorInput">Line Color: </label>
+            <input type="color" id="lineColorInput" name="lineColorInput" value="#65e67b" #lineColor
+              (change)="setLineColor(lineColor.value)">
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link">
+            <label for="lineWidthInput">Line Width: </label>
+            <input type="number" id="lineWidthInput" name="lineWidthInput" value="1" min="0" max="100" step="1"
+              #lineWidth (change)="setLineWidth(lineWidth.value)">
+          </a>
+        </li>
+
+        <li class="nav-item" (click)="undo()"><a class="nav-link"><i class="fas fa-undo tools-icons"></i></a></li>
+        <li class="nav-item" (click)="redo()"><a class="nav-link"><i class="fas fa-redo tools-icons"></i></a></li>
+
+        <li class="nav-item" (click)="delete()">
+          <a class="nav-link"><i class="fas fa-trash-alt tools-icons" id="delete"></i></a>
+        </li>
+
+        <li class="nav-item" (click)="copy()">
+          <a class="nav-link "><i class="fas fa-copy tools-icons" id="copy"></i></a>
+        </li>
+
+        <li class="nav-item" (click)="resize_move()">
+          <a class="nav-link "><i class="far fa-object-ungroup tools-icons" id="resize_move"></i></a>
+        </li>
+
+      </ul>
+    </div>
+
+    <a class="navbar-brand tools">Shapes</a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav3" aria-controls="navbarNav3" 
+    aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav3">
+      
+        <ul class="navbar-nav tools-elements">
+        <li (click)="setSelectedShape('CIRCLE')" class="nav-item">
+          <a class="nav-link"><span class="shapes-icons" style="font-size: 28px;">&#9711;</span></a>
+        </li>
+
+        <li (click)="setSelectedShape('LINE')" class="nav-item">
+          <a class="nav-link"><span class="shapes-icons" style="font-size: 25px;">&#9586;</span></a>
+        </li>
+
+        <li (click)="setSelectedShape('ELLIPSE')" class="nav-item">
+          <a class="nav-link"><span  class="shapes-icons" style="font-size: 40px;">&#x2B2D;</span></a>
+        </li>
+
+        <li (click)="setSelectedShape('TRIANGLE')" class="nav-item">
+          <a class="nav-link"><span  class="shapes-icons" style="font-size: 30px;">&#9722;</span></a>
+        </li>
+        
+        <li (click)="setSelectedShape('RECTANGLE')"  class="nav-item">
+          <a class="nav-link"><span class="shapes-icons" style="font-size: 35px;">&#9645;</span></a>
+        </li>
+
+        <li (click)="setSelectedShape('SQUARE')" class="nav-item">
+          <a class="nav-link"><span class="shapes-icons" style="font-size: 35px;">&#9633;</span></a>
+        </li>
+
+        <li (click)="setSelectedShape('PENTAGON')" class="nav-item">
+          <a class="nav-link"><span  class="shapes-icons" style="font-size: 35px;">&#11040;</span></a>
+        </li>
+
+        <li (click)="setSelectedShape('HEXAGON')" class="nav-item">
+          <a class="nav-link"><span  class="shapes-icons" style="font-size: 35px;">&#11041;</span></a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link"><i class="fa fa-paint-brush shapes-icons" style="font-size: 25px;"></i></a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+
+<div>
+  <canvas id="ghostCanvas"></canvas>
+  <canvas id="Stage"></canvas>
+</div>
+
+<router-outlet></router-outlet>
