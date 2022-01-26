@@ -9,31 +9,29 @@ import { Shape } from '../shape';
 export class PaintServiceService {
 
   constructor(private httpClient: HttpClient) { }
-
   paintURL: string = "http://localhost:8080/";
 
-  sendShape(shape: any): Observable<HttpResponse<any>> {
+  // Create Shape ...
+  create_shape(shape: any): Observable<Shape> {
     const headers = {'content-type' : 'application/json'};
-    return this.httpClient.post<any>(this.paintURL + "shape", shape, {
-      observe: 'response',
-      'headers' : headers
-    });
+    const body = JSON.stringify(shape);
+    return this.httpClient.post<Shape>(this.paintURL + 'shape', body, {
+      observe: 'body',
+      'headers' : headers}
+    );
   }
 
+  // Get All Shapes
   getAllShapes() : Observable <Shape[]> {
-    return this.httpClient.get<Shape[]>(this.paintURL + "shapes");
+    return this.httpClient.get<Shape[]>(this.paintURL + 'shapes');
   }
 
-  saveAsJSON() {
-    return this.httpClient.get(this.paintURL + "downloadJSON"); 
+  save() {
+    return this.httpClient.get(this.paintURL + 'save'); 
   }
 
-  saveAsXML() {
-    return this.httpClient.get(this.paintURL + "downloadXML"); 
-  }
-
-  loadING() {
-    return this.httpClient.get(this.paintURL + "loadFile"); 
+  load() {
+    return this.httpClient.get(this.paintURL + 'load'); 
   }
 
 }
