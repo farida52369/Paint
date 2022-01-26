@@ -11,21 +11,21 @@ public class ShapeFactory {
     public static Shape createShape(Shape shape, UUID id) {
         Shape requiredShape = null;
 
-        if(shape.getShapeName() == ShapeName.CIRCLE)
+        if(shape.getShapeName().equalsIgnoreCase("circle"))
             requiredShape = new Circle(shape.getShapeName(), shape.getShapeDimension(), shape.getShapeStyle());
-        else if (shape.getShapeName() == ShapeName.ELLIPSE)
+        else if (shape.getShapeName().equalsIgnoreCase("ellipse"))
             requiredShape = new Ellipse(shape.getShapeName(), shape.getShapeDimension(), shape.getShapeStyle());
-        else if (shape.getShapeName() == ShapeName.HEXAGON)
+        else if (shape.getShapeName().equalsIgnoreCase("hexagon"))
             requiredShape = new Hexagon(shape.getShapeName(), shape.getShapeDimension(), shape.getShapeStyle());
-        else if (shape.getShapeName() == ShapeName.LINE)
+        else if (shape.getShapeName().equalsIgnoreCase("line"))
             requiredShape = new Line(shape.getShapeName(), shape.getShapeDimension(), shape.getShapeStyle());
-        else if (shape.getShapeName() == ShapeName.POLYGON)
-            requiredShape = new Polygon(shape.getShapeName(), shape.getShapeDimension(), shape.getShapeStyle());
-        else if (shape.getShapeName() == ShapeName.RECTANGLE)
+        else if (shape.getShapeName().equalsIgnoreCase("pentagon"))
+            requiredShape = new Pentagon(shape.getShapeName(), shape.getShapeDimension(), shape.getShapeStyle());
+        else if (shape.getShapeName().equalsIgnoreCase("rectangle"))
             requiredShape = new Rectangle(shape.getShapeName(), shape.getShapeDimension(), shape.getShapeStyle());
-        else if (shape.getShapeName() == ShapeName.SQUARE)
+        else if (shape.getShapeName().equalsIgnoreCase("square"))
             requiredShape = new Square(shape.getShapeName(), shape.getShapeDimension(), shape.getShapeStyle());
-        else if (shape.getShapeName() == ShapeName.TRIANGLE)
+        else if (shape.getShapeName().equalsIgnoreCase("triangle"))
             requiredShape = new Triangle(shape.getShapeName(), shape.getShapeDimension(), shape.getShapeStyle());
 
         if (requiredShape != null)

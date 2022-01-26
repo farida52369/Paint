@@ -109,6 +109,7 @@ export class AppComponent implements AfterViewInit {
         }
       
         if (this.hasSelectedShape && this.mySelection === undefined) {
+          console.log(this.arr.length)
           this.drawCanvas(this.ctx);
 
           // To keep the canvas has the last drawn shapes.
@@ -225,7 +226,6 @@ export class AppComponent implements AfterViewInit {
               break;
           }
         }
-        
         this.arr[this.mySelectionIndex] = this.mySelection;
         this.drawCanvas(this.ghostCtx);
         // console.log("ARE YOU ENTERING HERE!! AHH YA 2LABY");
@@ -313,7 +313,6 @@ export class AppComponent implements AfterViewInit {
         console.log("SELECTED SHAPE NOW: " + this.mySelection.shapeName);
         console.log("SELECTED SHAPE DIMENSION NOW: " + this.mySelection.shapeDimension);
         console.log("SELECTED SHAPE STYLE NOW: " + this.mySelection.shapeStyle);
-        // this.invalidate();
         this.clearCanvas(this.ghostCtx);
         return;
       }
@@ -322,7 +321,6 @@ export class AppComponent implements AfterViewInit {
     // havent returned means we have selected nothing
     this.mySelection = undefined;
     this.clearCanvas(this.ghostCtx);
-    console.log("HIIIIIIIIIIIIIIIIII NO SELECTION!!");
   }
 
   styleDisplayCanvas(displayMainCanva : string, displayGhostCanva : string) {
@@ -333,10 +331,8 @@ export class AppComponent implements AfterViewInit {
   // Draw Shapes In Ghost Canvas
   drawShapesUsingIndex(i : any, canvas : any) {
     let shape = this.arr[i];
-    if(shape == null) {
-      return;
-    }
-
+    if(shape === undefined) return;
+    
     // Time To draw
     this.factoryShapes(shape.shapeDimension.start_x, shape.shapeDimension.start_y, 
       shape.shapeDimension.end_x, shape.shapeDimension.end_y, shape.shapeName, canvas, shape.shapeStyle);
@@ -361,23 +357,28 @@ export class AppComponent implements AfterViewInit {
       this.drawShapesUsingCircles(x1, y1, x2, y2, 6, canvas, tempStyle);
     }  else if (shapeType === 'square') {
       this.drawShapesUsingCircles(x1, y1, x2, y2, 4, canvas, tempStyle);
-    } 
+    } // End of Factory ... 
   }
 
   // CANVAS DRAWING :))
   drawCanvas(canvas : any) {
     this.clearCanvas(this.ctx);
     this.clearCanvas(this.ghostCtx);
+
     (canvas == this.ghostCtx)? this.styleDisplayCanvas('none', 'block'): this.styleDisplayCanvas('block', 'none');
     let len  = this.arr.length;
-    // render for Shapes in Main Canvas
+    
+    console.log("The Length of the array: " + len)
+    // Render for Shapes in Main Canvas
     for (let i = 0; i < len; i++) {
       this.drawShapesUsingIndex(i, canvas);
-    }
+    } 
+
     if(this.mySelection !== undefined) {
       this.setVarForSelectionBox(this.mySelection.shapeDimension.start_x, this.mySelection.shapeDimension.start_y, 
         this.mySelection.shapeDimension.end_x, this.mySelection.shapeDimension.end_y, this.mySelection.shapeName);
-    }
+    } 
+
   }
 
   sizeCanvas() {
@@ -427,6 +428,7 @@ export class AppComponent implements AfterViewInit {
 
   // Now time to save the drawing
   saveCurrentDrawing(e : any) {
+
     // Things we know about every shape
     this.shapeName = this.selectedShape;
     this.setDimension(e.offsetX, e.offsetY);
@@ -439,10 +441,7 @@ export class AppComponent implements AfterViewInit {
       shapeStyle : this.style,
       id : ''
     })
-
-    this.shapeName = this.shapeName.toUpperCase();
     this.postingShape();
-    console.log(typeof this.style + "  :  " + this.style + " Name: " + this.shapeName);
 
     // Setting (x, y) and drawingNow to initial values
     this.x = 0;
@@ -451,6 +450,8 @@ export class AppComponent implements AfterViewInit {
 
   // POSTING A SHAPE TO THE BACKEND
   postingShape() {
+
+    // To upper __ 34an tb2y t4ly ahly b Enum :))
     let data = {
       shapeName : this.shapeName,
       shapeDimension : this.dimensions,
@@ -460,22 +461,35 @@ export class AppComponent implements AfterViewInit {
     this.paintService.create_shape(data).subscribe(
       (response) => {
         response = JSON.parse(JSON.stringify(response))
-        console.log("I DID MY JOB AND POST THE SHAPE TO THE BACKEND: " + response.shapeDimension.end_x + " " + response.id);
+        this.arr[this.arr.length - 1] = response;
+        console.log("I DID MY JOB AND POST THE SHAPE TO THE BACKEND: " + response.shapeName);
       },
-      (error) => {
-        console.log("7AZ AWFR EL MARA EL GAYA");
-    });
+      (error) => console.log("7AZ AWFR EL MARA EL GAYA!!")
+    );
     
   }
 
   // GETTING ALL SHAPES FROM THE BACKEND
   getAllShapes() {
-    // this.drawCanvas(this.ctx);
+    this.paintService.getAllShapes().subscribe(
+      (response) => {
+        this.arr = response;
+        
+        console.log("Shapes:")
+        for(let i = 0; i < this.arr.length; i++) {
+          console.log(this.arr[i].shapeName)
+        }
+        this.drawCanvas(this.ctx);
+        console.log("HEllo!!!!!!!!!!!!!!!!!")
+      }, (error) => {
+        console.error("7AZ AWFER EL MARA EL GAYA!")
+      })
+    
   }
 
   // FOR SELECTION BOX  --  :)
   // Draw Selection Box
-  setVarForSelectionBox(x1 : number, y1 : number, x2 : number, y2 : number, shape : string) {
+  setVarForSelectionBox(x1 : number, y1 : number, x2 : number, y2 : number, shape : string) {    
     let h = 0, w = 0, x = 0, y  =0;
     if(shape === 'circle') {
       let raduis = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
@@ -723,7 +737,6 @@ export class AppComponent implements AfterViewInit {
     ctx.closePath();
     ctx.fill();
     ctx.stroke();
-
     ctx.beginPath();
   }
 
@@ -827,7 +840,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   undo() {
-
+    this.getAllShapes();
   }
 
 }
