@@ -1,6 +1,7 @@
 package com.example.Backend.controller;
 
 
+import com.example.Backend.model.service.ISingleton;
 import com.example.Backend.model.service.Singleton;
 import com.example.Backend.model.shapes.Shape;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +13,7 @@ import java.util.UUID;
 @CrossOrigin(origins = "http://localhost:4200")
 public class Controller {
 
-    Singleton singleton = Singleton.getInstance();
+    ISingleton singleton = Singleton.getInstance();
 
     @RequestMapping(value = "/shape", method = RequestMethod.POST)
     public Shape getShape(@RequestBody Shape shape) {

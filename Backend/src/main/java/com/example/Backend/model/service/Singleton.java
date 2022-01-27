@@ -36,11 +36,6 @@ public class Singleton implements ISingleton {
     }
 
 
-    public List<Shape> getAll_shapes() {
-        // All Shapes (get)
-        return all_shapes;
-    }
-
     public void setAll_shapes(List<Shape> all_shapes) {
         // All Shapes (set)
         this.all_shapes = all_shapes;
@@ -52,9 +47,6 @@ public class Singleton implements ISingleton {
                 }.getType());
     }
 
-    public Shape last_added_shape() {
-        return all_shapes.get(all_shapes.size() - 1);
-    }
 
     // ExecuteCommand to push the command in the Stack.
     private void executeCommand(Command command) {
@@ -62,6 +54,22 @@ public class Singleton implements ISingleton {
             history.pushUndo(command);
             // backup is EMPTY!
         }
+    }
+
+    @Override
+    public void create_shape(Shape shape) {
+        executeCommand(new CreateCommand(shape));
+    }
+
+    @Override
+    public Shape last_added_shape() {
+        return all_shapes.get(all_shapes.size() - 1);
+    }
+
+    @Override
+    public List<Shape> getAll_shapes() {
+        // All Shapes (get)
+        return all_shapes;
     }
 
     @Override
@@ -86,11 +94,6 @@ public class Singleton implements ISingleton {
             command.undo();
             history.pushRedo(command);
         }
-    }
-
-    @Override
-    public void create_shape(Shape shape) {
-        executeCommand(new CreateCommand(shape));
     }
 
     @Override
