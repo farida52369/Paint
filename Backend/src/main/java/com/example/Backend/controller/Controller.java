@@ -26,11 +26,12 @@ public class Controller {
     }
 
 
-    @RequestMapping(value = "/copy", method = RequestMethod.GET)
-    public void copy(@RequestParam(value = "id") String id,
+    @RequestMapping(value = "/copy", method = RequestMethod.POST)
+    public Shape copy(@RequestParam(value = "id") String id,
                      @RequestParam(value = "dimension") String dimension) {
         UUID uuid = UUID.fromString(id);
         singleton.copy(uuid, dimension);
+        return singleton.last_added_shape();
     }
 
     @RequestMapping(value = "/move", method = RequestMethod.GET)
