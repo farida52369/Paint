@@ -5,7 +5,7 @@ import com.example.Backend.model.shapes.Shape;
 import java.util.HashMap;
 
 public class Polygon extends Shape {
-    public Polygon(String shapeName, HashMap<String, String> shapeDimension, HashMap<String, String> shapeStyle) {
+    public Polygon(String shapeName, HashMap<String, Integer> shapeDimension, HashMap<String, String> shapeStyle) {
         super(shapeName, shapeDimension, shapeStyle);
     }
 

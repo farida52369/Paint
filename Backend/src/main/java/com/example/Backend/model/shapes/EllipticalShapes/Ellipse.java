@@ -3,7 +3,7 @@ package com.example.Backend.model.shapes.EllipticalShapes;
 import java.util.HashMap;
 
 public class Ellipse extends Elliptical {
-    public Ellipse(String shapeName, HashMap<String, String> shapeDimension, HashMap<String, String> shapeStyle) {
+    public Ellipse(String shapeName, HashMap<String, Integer> shapeDimension, HashMap<String, String> shapeStyle) {
         super(shapeName, shapeDimension, shapeStyle);
     }
 

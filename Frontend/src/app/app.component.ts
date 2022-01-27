@@ -70,9 +70,9 @@ export class AppComponent implements AfterViewInit {
   mySelectionIndex: number = -1;
 
   // The selection color and width. Right now we have a red selection with a small width
-  mySelColor: string = '#D8BFD8';
+  mySelColor: string = '#1E90FF'; 
   mySelWidth: number = 2;
-  mySelBoxColor: string = 'darkred'; // New for selection boxes
+  mySelBoxColor: string = '#A52A2A'; // New for selection boxes
   mySelBoxSize: number = 6;
 
   // 
@@ -109,7 +109,6 @@ export class AppComponent implements AfterViewInit {
         }
 
         if (this.hasSelectedShape && this.mySelection === undefined) {
-          console.log(this.arr.length)
           this.drawCanvas(this.ctx);
 
           // To keep the canvas has the last drawn shapes.
@@ -368,8 +367,7 @@ export class AppComponent implements AfterViewInit {
     // console.log("The Length of the array: " + len)
     // Render for Shapes in Main Canvas
     for (let i = 0; i < len; i++) {
-      this.drawShapesUsingIndex(i, canvas);
-      console.log(this.arr[i].shapeName + " " + this.arr[i].id + " " + typeof this.arr[i].shapeDimension.end_x)
+      this.drawShapesUsingIndex(i, canvas)
     }
 
     if (this.mySelection !== undefined) {
@@ -448,8 +446,6 @@ export class AppComponent implements AfterViewInit {
 
   // POSTING A SHAPE TO THE BACKEND
   postingShape() {
-
-    // To upper __ 34an tb2y t4ly ahly b Enum :))
     let data = {
       shapeName: this.shapeName,
       shapeDimension: this.dimensions,
@@ -460,30 +456,19 @@ export class AppComponent implements AfterViewInit {
       (response) => {
         response = JSON.parse(JSON.stringify(response))
         this.arr[this.arr.length - 1] = response;
-        console.log("I DID MY JOB AND POST THE SHAPE TO THE BACKEND: )");
-        console.log("The Shape: " + response.shapeName);
-      },
-      (error) => console.log("7AZ AWFR EL MARA EL GAYA!!")
-    );
-
+        console.log("I DID MY JOB AND POST THE SHAPE TO THE BACKEND: )")
+      }, () => console.log("7AZ AWFR EL MARA EL GAYA!!")
+    )
   }
 
   // GETTING ALL SHAPES FROM THE BACKEND
   getAllShapes() {
     this.paintService.getAllShapes().subscribe(
       (response) => {
-        this.arr = response;
-
-        console.log("Shapes:")
-        for (let i = 0; i < this.arr.length; i++) {
-          console.log(this.arr[i].shapeName)
-        }
-        this.drawCanvas(this.ctx);
-        console.log("HEllo!!!!!!!!!!!!!!!!!")
-      }, (error) => {
-        console.error("7AZ AWFER EL MARA EL GAYA!")
-      })
-
+        this.arr = response
+        this.drawCanvas(this.ctx)
+      }, () => console.error("7AZ AWFER EL MARA EL GAYA!")
+      )
   }
 
   // FOR SELECTION BOX  --  :)
@@ -540,12 +525,12 @@ export class AppComponent implements AfterViewInit {
 
   drawSelectionBox(x: number, y: number, w: number, h: number) {
 
-    this.ghostCtx.strokeStyle = this.mySelColor;
-    this.ghostCtx.lineWidth = this.mySelWidth;
-    this.ghostCtx.strokeRect(x, y, w, h);
+    this.ghostCtx.strokeStyle = this.mySelColor
+    this.ghostCtx.lineWidth = this.mySelWidth
+    this.ghostCtx.strokeRect(x, y, w, h)
 
     // draw the boxes
-    var half = this.mySelBoxSize / 2;
+    var half = this.mySelBoxSize / 2
 
     // 0  1  2
     // 3     4
@@ -594,11 +579,10 @@ export class AppComponent implements AfterViewInit {
       y: y + h - half
     }
 
-    this.ghostCtx.fillStyle = this.mySelBoxColor;
+    this.ghostCtx.fillStyle = this.mySelBoxColor
     for (let i = 0; i < 8; i++) {
-      let cur = this.selectionHandles[i];
-      this.ghostCtx.fillRect(cur.x, cur.y, this.mySelBoxSize, this.mySelBoxSize);
-      // console.log("HELLLLO SELECTION BOX -- HOPE U WORK")
+      let cur = this.selectionHandles[i]
+      this.ghostCtx.fillRect(cur.x, cur.y, this.mySelBoxSize, this.mySelBoxSize)
     }
   }
 
@@ -630,14 +614,14 @@ export class AppComponent implements AfterViewInit {
   // Rectangle
   drawRectangle(x1: number, y1: number, x2: number, y2: number, ctx: any, tempStyle: any) {
     if (this.drawingNow) {
-      this.ctx.putImageData(this.imageData, 0, 0);
+      this.ctx.putImageData(this.imageData, 0, 0)
     }
-    let w = Math.abs(x1 - x2);
-    let h = Math.abs(y1 - y2);
+    let w = Math.abs(x1 - x2)
+    let h = Math.abs(y1 - y2)
 
-    this.attributeCanvas(ctx, tempStyle.strokeStyle, tempStyle.lineWidth, tempStyle.fillStyle);
-    ctx.fillRect(x1, y1, w, h);
-    ctx.strokeRect(x1, y1, w, h);
+    this.attributeCanvas(ctx, tempStyle.strokeStyle, tempStyle.lineWidth, tempStyle.fillStyle)
+    ctx.fillRect(x1, y1, w, h)
+    ctx.strokeRect(x1, y1, w, h)
     ctx.beginPath();
     // console.log("HAT4ALLLLL -- :)")
   }
@@ -794,10 +778,10 @@ export class AppComponent implements AfterViewInit {
     if (this.mySelection !== undefined) {
       // DEEP COPY -- SHALLOW COPY IS BADDDD
       let shape: Shape = JSON.parse(JSON.stringify(this.mySelection));
-      shape.shapeDimension.start_x = (Number(shape.shapeDimension.start_x) + 20);
-      shape.shapeDimension.start_y = (Number(shape.shapeDimension.start_y) + 20);
-      shape.shapeDimension.end_x = (Number(shape.shapeDimension.end_x) + 20);
-      shape.shapeDimension.end_y = (Number(shape.shapeDimension.end_y) + 20);
+      shape.shapeDimension.start_x += 20
+      shape.shapeDimension.start_y += 20
+      shape.shapeDimension.end_x += 20
+      shape.shapeDimension.end_y += 20
       this.arr.push(shape);
       this.drawCanvas(this.ctx);
 
@@ -820,8 +804,7 @@ export class AppComponent implements AfterViewInit {
       () => {
         console.log("NEW DRAWING ON THE WAY!")
         this.getAllShapes();
-      },
-      () => console.log('Fred, YOU BROKE MY HEART ..')
+      }, () => console.log('Fred, YOU BROKE MY HEART ..')
       )
   }
 
@@ -831,11 +814,14 @@ export class AppComponent implements AfterViewInit {
   }
 
   load() {
+    if (this.arr.length > 0) {
+      alert('You\'ll lose current drawings if not saved!')
+    }
     this.paintService.load().subscribe(() => {
       console.log("No PROBLEM WHILE LOADING!")
       this.getAllShapes();
-    }
-      , () => console.log("LOADING PROBLEMS AS USUAL :)"))
+    }, () => console.log("LOADING PROBLEMS AS USUAL :)")
+    )
   }
 
   redo() {

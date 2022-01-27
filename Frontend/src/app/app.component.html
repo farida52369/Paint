@@ -15,10 +15,10 @@
     
     <div class="collapse navbar-collapse requirements" id="navbarNav1">
       <ul class="navbar-nav me-auto items">
-        <li class="nav-item" (click)="new()"><a class="nav-link"><span class="fas fa-plus fa-lg">  New</span></a></li>
-        <li class="nav-item" (click)="save()"><a class="nav-link"><span class="fas fa-save fa-lg">  Save</span></a></li>
+        <li class="nav-item" (click)="new()"  title="New Drawing"><a class="nav-link"><span class="fas fa-plus fa-lg">  New</span></a></li>
+        <li class="nav-item" (click)="save()"  title="Save Drawing"><a class="nav-link"><span class="fas fa-save fa-lg">  Save</span></a></li>
         
-        <li class="nav-item" (click)="load()">
+        <li class="nav-item" (click)="load()" title="Load Drawing">
           <a class="nav-link"><span class="fas fa-folder-open fa-lg">  Open</span></a>
         </li>
       </ul>
@@ -68,18 +68,18 @@
           </a>
         </li>
 
-        <li class="nav-item" (click)="undo()"><a class="nav-link"><i class="fas fa-undo tools-icons"></i></a></li>
-        <li class="nav-item" (click)="redo()"><a class="nav-link"><i class="fas fa-redo tools-icons"></i></a></li>
+        <li class="nav-item" (click)="undo()" title="undo action"><a class="nav-link"><i class="fas fa-undo tools-icons"></i></a></li>
+        <li class="nav-item" (click)="redo()" title="redo action"><a class="nav-link"><i class="fas fa-redo tools-icons"></i></a></li>
 
-        <li class="nav-item" (click)="delete()">
+        <li class="nav-item" (click)="delete()" title="delete shape">
           <a class="nav-link"><i class="fas fa-trash-alt tools-icons" id="delete"></i></a>
         </li>
 
-        <li class="nav-item" (click)="copy()">
+        <li class="nav-item" (click)="copy()" title="copy shape">
           <a class="nav-link "><i class="fas fa-copy tools-icons" id="copy"></i></a>
         </li>
 
-        <li class="nav-item" (click)="resize_move()">
+        <li class="nav-item" (click)="resize_move()" title="resize move shape">
           <a class="nav-link "><i class="far fa-object-ungroup tools-icons" id="resize_move"></i></a>
         </li>
 
@@ -96,35 +96,35 @@
     <div class="collapse navbar-collapse" id="navbarNav3">
       
         <ul class="navbar-nav tools-elements">
-        <li (click)="setSelectedShape('circle')" class="nav-item">
+        <li (click)="setSelectedShape('circle')" class="nav-item" title="Circle">
           <a class="nav-link"><span class="shapes-icons" style="font-size: 28px;">&#9711;</span></a>
         </li>
 
-        <li (click)="setSelectedShape('line')" class="nav-item">
+        <li (click)="setSelectedShape('line')" class="nav-item" title="Line">
           <a class="nav-link"><span class="shapes-icons" style="font-size: 25px;">&#9586;</span></a>
         </li>
 
-        <li (click)="setSelectedShape('ellipse')" class="nav-item">
+        <li (click)="setSelectedShape('ellipse')" class="nav-item" title="Ellipse">
           <a class="nav-link"><span  class="shapes-icons" style="font-size: 40px;">&#x2B2D;</span></a>
         </li>
 
-        <li (click)="setSelectedShape('triangle')" class="nav-item">
+        <li (click)="setSelectedShape('triangle')" class="nav-item" title="Triangle">
           <a class="nav-link"><span  class="shapes-icons" style="font-size: 30px;">&#9722;</span></a>
         </li>
         
-        <li (click)="setSelectedShape('rectangle')"  class="nav-item">
+        <li (click)="setSelectedShape('rectangle')"  class="nav-item" title="Rectangle">
           <a class="nav-link"><span class="shapes-icons" style="font-size: 35px;">&#9645;</span></a>
         </li>
 
-        <li (click)="setSelectedShape('square')" class="nav-item">
+        <li (click)="setSelectedShape('square')" class="nav-item" title="Square">
           <a class="nav-link"><span class="shapes-icons" style="font-size: 35px;">&#9633;</span></a>
         </li>
 
-        <li (click)="setSelectedShape('pentagon')" class="nav-item">
+        <li (click)="setSelectedShape('pentagon')" class="nav-item" title="Pentagon">
           <a class="nav-link"><span  class="shapes-icons" style="font-size: 35px;">&#11040;</span></a>
         </li>
 
-        <li (click)="setSelectedShape('hexagon')" class="nav-item">
+        <li (click)="setSelectedShape('hexagon')" class="nav-item" title="Hexagon">
           <a class="nav-link"><span  class="shapes-icons" style="font-size: 35px;">&#11041;</span></a>
         </li>
 

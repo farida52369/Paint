@@ -46,9 +46,9 @@ public class Singleton implements ISingleton {
         this.all_shapes = all_shapes;
     }
 
-    public HashMap<String, String> fromJSONObjectToHashMap(String JSONString) {
+    public HashMap<String, Integer> fromJSONObjectToHashMap(String JSONString) {
         return new Gson().fromJson(JSONString,
-                new TypeToken<HashMap<String, String>>() {
+                new TypeToken<HashMap<String, Integer>>() {
                 }.getType());
     }
 
@@ -95,13 +95,12 @@ public class Singleton implements ISingleton {
 
     @Override
     public void copy(UUID id, String dimensions) {
-        HashMap<String, String> dim = fromJSONObjectToHashMap(dimensions);
         Shape copiedShape = all_shapes.stream()
                 .filter(shape -> shape.getId().equals(id)).findAny().orElse(null);
 
         assert copiedShape != null;
         Shape tempCopied = (Shape) copiedShape.clone();
-        tempCopied.setShapeDimension(dim);
+        tempCopied.setShapeDimension(fromJSONObjectToHashMap(dimensions));
         executeCommand(new CreateCommand(tempCopied));
     }
 

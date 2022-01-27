@@ -7,7 +7,7 @@ import java.util.UUID;
 public class Shape implements Cloneable {
 
     private String shapeName;
-    private HashMap<String, String> shapeDimension;
+    private HashMap<String, Integer> shapeDimension;
     private HashMap<String, String> shapeStyle;
     private UUID id;
 
@@ -16,7 +16,7 @@ public class Shape implements Cloneable {
     }
 
     public Shape(String shapeName,
-                 HashMap<String, String> shapeDimension,
+                 HashMap<String, Integer> shapeDimension,
                  HashMap<String, String> shapeStyle) {
         this.shapeName = shapeName;
         this.shapeDimension = shapeDimension;
@@ -34,12 +34,12 @@ public class Shape implements Cloneable {
         this.shapeName = shapeName;
     }
 
-    public HashMap<String, String> getShapeDimension() {
+    public HashMap<String, Integer> getShapeDimension() {
         // Shape Dimension (get)
         return shapeDimension;
     }
 
-    public void setShapeDimension(HashMap<String, String> shapeDimension) {
+    public void setShapeDimension(HashMap<String, Integer> shapeDimension) {
         // Shape Dimension (set)
         this.shapeDimension = shapeDimension;
     }

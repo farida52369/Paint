@@ -30,6 +30,11 @@ a {
 
 label{
     padding-right: 15px;
+    cursor: pointer;
+}
+
+input {
+    cursor: pointer;
 }
 
 .tools-shapes {
@@ -42,6 +47,7 @@ label{
     border-right: 1px solid black;
     margin: 0px;
     padding-right: 10px;
+    cursor: auto;
 }
 
 .tools-elements a, .shapes-elements a{

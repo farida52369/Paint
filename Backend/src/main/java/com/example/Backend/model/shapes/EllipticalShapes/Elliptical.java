@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 public class Elliptical extends Shape {
 
-    public Elliptical(String shapeName, HashMap<String, String> shapeDimension, HashMap<String, String> shapeStyle) {
+    public Elliptical(String shapeName, HashMap<String, Integer> shapeDimension, HashMap<String, String> shapeStyle) {
         super(shapeName, shapeDimension, shapeStyle);
     }
 

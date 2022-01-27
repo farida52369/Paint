@@ -9,9 +9,9 @@ public class ChangeCommand extends Command {
 
     private Shape shape;
     private final UUID id;
-    private final HashMap<String, String> dimensions;
+    private final HashMap<String, Integer> dimensions;
 
-    public ChangeCommand(UUID id, HashMap<String, String> dimensions) {
+    public ChangeCommand(UUID id, HashMap<String, Integer> dimensions) {
         this.id = id;
         this.dimensions = dimensions;
     }

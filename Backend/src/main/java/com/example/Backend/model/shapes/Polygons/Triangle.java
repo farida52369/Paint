@@ -3,7 +3,7 @@ package com.example.Backend.model.shapes.Polygons;
 import java.util.HashMap;
 
 public class Triangle extends Polygon {
-    public Triangle(String shapeName, HashMap<String, String> shapeDimension, HashMap<String, String> shapeStyle) {
+    public Triangle(String shapeName, HashMap<String, Integer> shapeDimension, HashMap<String, String> shapeStyle) {
         super(shapeName, shapeDimension, shapeStyle);
     }
 
