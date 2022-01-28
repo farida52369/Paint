@@ -1,5 +1,5 @@
 import { Shape, Dimension, Style } from './shape';
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, HostListener } from '@angular/core';
 import { PaintServiceService } from './service/paint-service.service';
 
 @Component({
@@ -838,4 +838,32 @@ export class AppComponent implements AfterViewInit {
     }, () => console.log("ERROR! WHAT DO YOU EXPECT!!"))
   }
 
+  // Host Listener For basic Operations
+  @HostListener('window:keydown.control.c', ['$event']) ctrlC() {
+    this.copy();
+  }
+
+  @HostListener('window:keydown.control.z', ['$event']) ctrlZ() {
+    this.undo();
+  }
+
+  @HostListener('window:keydown.control.y', ['$event']) ctrlY() {
+    this.redo();
+  }
+
+  @HostListener('window:keydown.delete', ['$event']) del() {
+    this.delete();
+  }
+
+  @HostListener('window:keydown.control.s', ['$event']) ctrlS() {
+    this.save();
+  }
+
+  @HostListener('window:keydown.control.o', ['$event']) ctrlO() {
+    this.load();
+  }
+
+  @HostListener('window:keydown.control.n', ['$event']) ctrlN() {
+    this.new();
+  }
 }
