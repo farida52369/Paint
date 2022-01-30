@@ -41,11 +41,18 @@ public class Singleton implements ISingleton {
         this.all_shapes = all_shapes;
     }
 
-    public HashMap<String, Integer> fromJSONObjectToHashMap(String JSONString) {
+    public HashMap<String, Integer> fromJSONToDimension(String JSONString) {
         return new Gson().fromJson(JSONString,
                 new TypeToken<HashMap<String, Integer>>() {
                 }.getType());
     }
+
+    public HashMap<String, String> fromJSONToStyle(String JSONString) {
+        return new Gson().fromJson(JSONString,
+                new TypeToken<HashMap<String, String>>() {
+                }.getType());
+    }
+
 
 
     // ExecuteCommand to push the command in the Stack.
@@ -103,13 +110,13 @@ public class Singleton implements ISingleton {
 
         assert copiedShape != null;
         Shape tempCopied = (Shape) copiedShape.clone();
-        tempCopied.setShapeDimension(fromJSONObjectToHashMap(dimensions));
+        tempCopied.setShapeDimension(fromJSONToDimension(dimensions));
         executeCommand(new CreateCommand(tempCopied));
     }
 
     @Override
-    public void move_resize(UUID id, String dimensions) {
-        executeCommand(new ChangeCommand(id, fromJSONObjectToHashMap(dimensions)));
+    public void move_resize(UUID id, String dimensions, String style) {
+        executeCommand(new ChangeCommand(id, fromJSONToDimension(dimensions), fromJSONToStyle(style)));
     }
 
     @Override

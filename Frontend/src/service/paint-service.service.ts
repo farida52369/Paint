@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Shape } from '../shape';
+import { Shape } from '../app/shape';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +27,6 @@ export class PaintServiceService {
     return this.httpClient.get<Shape[]>(this.paintURL + 'shapes');
   }
 
-
   save() { // Save the drawing in XML and JSON format
     return this.httpClient.get(this.paintURL + 'save');
   }
@@ -44,18 +43,27 @@ export class PaintServiceService {
     return this.httpClient.get(this.paintURL + 'redo');
   }
 
-  new() {
+  new() { // Somewhere in these eyes__
     return this.httpClient.get(this.paintURL + 'new');
   }
 
-  delete(id: any) {
+  delete(id: any) { // I thought You said you loved the ocean!
     console.log("Delete On Service: " + id + "  After stringfy: " + JSON.stringify(id))
     return this.httpClient.delete(this.paintURL + 'delete', {
-      params: {id}
+      params: { id }
     });
   }
 
-  // Create Shape ...
+  // Move Shape ...
+  move(id: any, dim: any, sty: any) { // Who will dry your eyes when it falls apart!!
+    const dimension = JSON.stringify(dim), style = JSON.stringify(sty);  // When you like me .. I Smile :)
+    return this.httpClient.post<Shape>(this.paintURL + 'move', { id, dimension, style }, {
+      params: { id, dimension, style }
+    }
+    );
+  }
+
+  // Copy Shape ...
   copy(id: any, dim: any): Observable<Shape> {
     const dimension = JSON.stringify(dim); // When you like me .. I Smile :)
     return this.httpClient.post<Shape>(this.paintURL + 'copy', { id, dimension }, {

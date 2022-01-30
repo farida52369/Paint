@@ -1,6 +1,6 @@
 import { Shape, Dimension, Style } from './shape';
 import { AfterViewInit, Component, HostListener } from '@angular/core';
-import { PaintServiceService } from './service/paint-service.service';
+import { PaintServiceService } from '../service/paint-service.service';
 
 @Component({
   selector: 'app-root',
@@ -46,6 +46,9 @@ export class AppComponent implements AfterViewInit {
   selectedShape: string = '';
   hasSelectedShape: boolean = false;
 
+  // alert
+  saveBeforeLoad: boolean = true
+
   // (X, Y) current Point
   x: number = 0;
   y: number = 0;
@@ -70,7 +73,7 @@ export class AppComponent implements AfterViewInit {
   mySelectionIndex: number = -1;
 
   // The selection color and width. Right now we have a red selection with a small width
-  mySelColor: string = '#1E90FF'; 
+  mySelColor: string = '#1E90FF';
   mySelWidth: number = 2;
   mySelBoxColor: string = '#A52A2A'; // New for selection boxes
   mySelBoxSize: number = 6;
@@ -145,11 +148,16 @@ export class AppComponent implements AfterViewInit {
           this.helpDrawingSelectedShape(this.x, this.y, e, tempStyle);
           this.saveCurrentDrawing(e);
           this.drawingNow = false;
-        }
+          this.saveBeforeLoad = false;
+        }  
+        // If Moving ?!
+        this.sendMovedShapeToBackend();
+
         this.isDrag = false;
         this.isResizeDrag = false;
         this.expectResize = -1;
       });
+
     });
 
   }
@@ -202,6 +210,16 @@ export class AppComponent implements AfterViewInit {
               this.mySelection.shapeDimension.end_y = ym;
               break;
             case 7:
+              this.mySelection.shapeDimension.end_x = xm;
+              this.mySelection.shapeDimension.end_y = ym;
+              break;
+          }
+        } else if (this.mySelection.shapeName === 'circle' || this.mySelection.shapeName === 'hexagon') {
+          switch (this.expectResize) {
+            case 1:
+            case 3:
+            case 4:
+            case 6:  
               this.mySelection.shapeDimension.end_x = xm;
               this.mySelection.shapeDimension.end_y = ym;
               break;
@@ -394,14 +412,39 @@ export class AppComponent implements AfterViewInit {
 
   setLineWidth(lineWidth: any) {
     this.globalLineWidth = lineWidth;
+    this.setStyleInRunTime(lineWidth, 'line width');
   }
 
   setLineColor(lineColor: any) {
     this.globalLineColor = lineColor;
+    this.setStyleInRunTime(lineColor, 'line color');
   }
 
   setFillColor(fillColor: any) {
     this.globalFillColor = fillColor;
+    this.setStyleInRunTime(fillColor, 'fill color');
+  }
+
+  setStyleInRunTime(style : any, type : string) {
+    if (this.mySelection !== undefined) {
+      switch(type) {
+        case 'line width' : 
+          this.mySelection.shapeStyle.lineWidth = style;
+          break;
+        case 'line color':
+          this.mySelection.shapeStyle.strokeStyle = style;
+          break;
+        case 'fill color':
+          this.mySelection.shapeStyle.fillStyle = style;
+          break;  
+      }
+      
+      this.arr[this.mySelectionIndex] = this.mySelection;
+      // Modification
+      this.clearCanvas(this.ghostCtx);
+      this.drawCanvas(this.ghostCtx);
+      this.sendMovedShapeToBackend();
+    }
   }
 
   // Setting Dimensions and Style Shape
@@ -461,6 +504,16 @@ export class AppComponent implements AfterViewInit {
     )
   }
 
+  sendMovedShapeToBackend() {
+    // Wait .......
+    if (this.mySelection !== undefined) {
+      this.paintService.move(this.mySelection.id, this.mySelection.shapeDimension, this.mySelection.shapeStyle).subscribe(
+      () => console.log("WE'VE MOVED THE SHAPE IN THE BACKEND :)") // Fall back into place
+      ,() => console.log("I'M NOT GOING TO FALL BACK INTO PLACE!")
+      ); // End of subscribe 
+    }
+  }
+
   // GETTING ALL SHAPES FROM THE BACKEND
   getAllShapes() {
     this.paintService.getAllShapes().subscribe(
@@ -468,7 +521,7 @@ export class AppComponent implements AfterViewInit {
         this.arr = response
         this.drawCanvas(this.ctx)
       }, () => console.error("7AZ AWFER EL MARA EL GAYA!")
-      )
+    )
   }
 
   // FOR SELECTION BOX  --  :)
@@ -520,17 +573,19 @@ export class AppComponent implements AfterViewInit {
       x = x1 - w / 2;
       y = y1 - h / 2;
     }
-    this.drawSelectionBox(x, y, w, h);
+
+    let offset = Number(this.mySelection?.shapeStyle.lineWidth);
+    this.drawSelectionBox(x - offset / 2, y - offset / 2, w + offset, h + offset);
   }
 
   drawSelectionBox(x: number, y: number, w: number, h: number) {
 
-    this.ghostCtx.strokeStyle = this.mySelColor
-    this.ghostCtx.lineWidth = this.mySelWidth
-    this.ghostCtx.strokeRect(x, y, w, h)
+    this.ghostCtx.strokeStyle = this.mySelColor;
+    this.ghostCtx.lineWidth = this.mySelWidth;
+    this.ghostCtx.strokeRect(x, y, w, h);
 
     // draw the boxes
-    var half = this.mySelBoxSize / 2
+    var half = this.mySelBoxSize / 2;
 
     // 0  1  2
     // 3     4
@@ -731,6 +786,11 @@ export class AppComponent implements AfterViewInit {
     this.drawCanvas(this.ctx);
     this.hasSelectedShape = true;
 
+    // Set resizing Variables __
+    this.is_resize_move = false;
+    this.mySelection = undefined;
+    this.mySelectionIndex = -1;
+
     // Shapes -- update selectedShape variable
     if (shape === 'circle') {
       this.selectedShape = 'circle';
@@ -757,6 +817,7 @@ export class AppComponent implements AfterViewInit {
     this.drawCanvas(this.ctx);
     this.is_resize_move = true;
 
+    // Set Selected Shape
     this.selectedShape = '';
     this.hasSelectedShape = false;
   }
@@ -769,8 +830,11 @@ export class AppComponent implements AfterViewInit {
 
       this.paintService.delete(this.mySelection.id).subscribe(
         () => console.log('DONE DELETION BACKEND!')
-        ,() => console.log("ERROR! WHILE DELETEION")
+        , () => console.log("ERROR! WHILE DELETEION")
       ) // End Service..
+
+      this.mySelection = undefined;
+      this.mySelectionIndex = -1;
     }
   }
 
@@ -795,26 +859,31 @@ export class AppComponent implements AfterViewInit {
         () => console.log("7AZ AWFR EL MARA EL GAYA!!")
       ); // End of Service
 
+      this.mySelection = undefined;
+      this.mySelectionIndex = -1;
     } // End of (If Selection is not undefined)
 
   }
 
   new() {
+    this.ngAfterViewInit();
     this.paintService.new().subscribe(
       () => {
         console.log("NEW DRAWING ON THE WAY!")
         this.getAllShapes();
       }, () => console.log('Fred, YOU BROKE MY HEART ..')
-      )
+    )
   }
 
   save() {
     this.paintService.save().subscribe(() => console.log("No PEOBLEM WHILE SAVING!")
       , () => console.log("SAVING PROBLEMS! PROBLEMS AS USUSAL :))"));
+
+    this.saveBeforeLoad = true;
   }
 
   load() {
-    if (this.arr.length > 0) {
+    if (!this.saveBeforeLoad) {
       alert('You\'ll lose current drawings if not saved!')
     }
     this.paintService.load().subscribe(() => {

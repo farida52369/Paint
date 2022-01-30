@@ -29,17 +29,18 @@ public class Controller {
 
     @RequestMapping(value = "/copy", method = RequestMethod.POST)
     public Shape copy(@RequestParam(value = "id") String id,
-                     @RequestParam(value = "dimension") String dimension) {
+                      @RequestParam(value = "dimension") String dimension) {
         UUID uuid = UUID.fromString(id);
         singleton.copy(uuid, dimension);
         return singleton.last_added_shape();
     }
 
-    @RequestMapping(value = "/move", method = RequestMethod.GET)
+    @RequestMapping(value = "/move", method = RequestMethod.POST)
     public void move(@RequestParam(value = "id") String id,
-                     @RequestParam(value = "dimension") String dimension) {
+                     @RequestParam(value = "dimension") String dimension,
+                     @RequestParam(value = "style") String style) {
         UUID uuid = UUID.fromString(id);
-        singleton.move_resize(uuid, dimension);
+        singleton.move_resize(uuid, dimension, style);
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)

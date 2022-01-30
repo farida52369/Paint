@@ -18,7 +18,7 @@ public interface ISingleton {
 
     void copy(UUID id, String dimensions);
 
-    void move_resize(UUID id, String dimensions);
+    void move_resize(UUID id, String dimensions, String style);
 
     void delete(UUID id);
 

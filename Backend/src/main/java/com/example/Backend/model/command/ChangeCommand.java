@@ -10,10 +10,12 @@ public class ChangeCommand extends Command {
     private Shape shape;
     private final UUID id;
     private final HashMap<String, Integer> dimensions;
+    private final HashMap<String, String> style;
 
-    public ChangeCommand(UUID id, HashMap<String, Integer> dimensions) {
+    public ChangeCommand(UUID id, HashMap<String, Integer> dimensions, HashMap<String, String> style) {
         this.id = id;
         this.dimensions = dimensions;
+        this.style = style;
     }
 
     @Override
@@ -23,6 +25,7 @@ public class ChangeCommand extends Command {
                 .filter(shape_ -> shape.getId().equals(shape_.getId())).findAny().orElse(null);
         assert changedShape != null;
         changedShape.setShapeDimension(shape.getShapeDimension());
+        changedShape.setShapeStyle(shape.getShapeStyle());
     }
 
     @Override
@@ -33,6 +36,7 @@ public class ChangeCommand extends Command {
         assert changedShape != null;
         shape = (Shape) changedShape.clone();
         changedShape.setShapeDimension(dimensions);
+        changedShape.setShapeStyle(style);
         System.out.println("Moving or Resizing Shape ...\n" + changedShape);
         return true;
     }
