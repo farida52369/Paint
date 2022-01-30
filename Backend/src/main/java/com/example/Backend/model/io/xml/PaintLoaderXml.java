@@ -37,7 +37,7 @@ public class PaintLoaderXml implements PaintIO {
             return shapes;
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            return new Shape[0];
         }
     }
 

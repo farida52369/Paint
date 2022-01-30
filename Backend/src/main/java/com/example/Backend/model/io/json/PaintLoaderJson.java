@@ -33,7 +33,7 @@ public class PaintLoaderJson implements PaintIO {
             return shapes.toArray(new Shape[0]);
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            return new Shape[0];
         }
     }
 
