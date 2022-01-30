@@ -91,6 +91,9 @@ export class AppComponent implements AfterViewInit {
     this.canvas = <HTMLCanvasElement>document.getElementById('Stage');
     this.ghostCanvas = <HTMLCanvasElement>document.getElementById('ghostCanvas');
 
+    this.mySelection = undefined;
+    this.mySelectionIndex = -1;
+
     if (this.canvas.getContext && this.ghostCanvas.getContext) {
       this.ctx = this.canvas.getContext('2d');
       this.ghostCtx = this.ghostCanvas.getContext('2d');
@@ -888,6 +891,8 @@ export class AppComponent implements AfterViewInit {
     }
     this.paintService.load().subscribe(() => {
       console.log("No PROBLEM WHILE LOADING!")
+      this.mySelection = undefined;
+      this.mySelectionIndex = -1;
       this.getAllShapes();
     }, () => console.log("LOADING PROBLEMS AS USUAL :)")
     )
