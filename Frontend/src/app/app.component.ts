@@ -385,10 +385,12 @@ export class AppComponent implements AfterViewInit {
     // console.log("The Length of the array: " + len)
     // Render for Shapes in Main Canvas
     for (let i = 0; i < len; i++) {
+      if(this.mySelection == this.arr[i]) continue;
       this.drawShapesUsingIndex(i, canvas)
     }
 
     if (this.mySelection !== undefined) {
+      this.drawShapesUsingIndex(this.mySelectionIndex, canvas);
       this.setVarForSelectionBox(this.mySelection.shapeDimension.start_x, this.mySelection.shapeDimension.start_y,
         this.mySelection.shapeDimension.end_x, this.mySelection.shapeDimension.end_y, this.mySelection.shapeName);
     }
