@@ -91,9 +91,6 @@ export class AppComponent implements AfterViewInit {
     this.canvas = <HTMLCanvasElement>document.getElementById('Stage');
     this.ghostCanvas = <HTMLCanvasElement>document.getElementById('ghostCanvas');
 
-    this.mySelection = undefined;
-    this.mySelectionIndex = -1;
-
     if (this.canvas.getContext && this.ghostCanvas.getContext) {
       this.ctx = this.canvas.getContext('2d');
       this.ghostCtx = this.ghostCanvas.getContext('2d');
@@ -785,14 +782,18 @@ export class AppComponent implements AfterViewInit {
     canva.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
+  setSelectionShape() {
+    this.mySelection = undefined;
+    this.mySelectionIndex = -1;
+    this.is_resize_move = false;
+  }
+
   setSelectedShape(shape: string) {
     this.drawCanvas(this.ctx);
     this.hasSelectedShape = true;
 
     // Set resizing Variables __
-    this.is_resize_move = false;
-    this.mySelection = undefined;
-    this.mySelectionIndex = -1;
+    this.setSelectionShape();
 
     // Shapes -- update selectedShape variable
     if (shape === 'circle') {
@@ -836,8 +837,8 @@ export class AppComponent implements AfterViewInit {
         , () => console.log("ERROR! WHILE DELETEION")
       ) // End Service..
 
-      this.mySelection = undefined;
-      this.mySelectionIndex = -1;
+      // Set mySelectionShape
+      this.setSelectionShape();
     }
   }
 
@@ -862,14 +863,14 @@ export class AppComponent implements AfterViewInit {
         () => console.log("7AZ AWFR EL MARA EL GAYA!!")
       ); // End of Service
 
-      this.mySelection = undefined;
-      this.mySelectionIndex = -1;
+      this.setSelectionShape();
     } // End of (If Selection is not undefined)
 
   }
 
   new() {
     this.ngAfterViewInit();
+    this.setSelectionShape();
     this.paintService.new().subscribe(
       () => {
         console.log("NEW DRAWING ON THE WAY!")
@@ -883,6 +884,7 @@ export class AppComponent implements AfterViewInit {
       , () => console.log("SAVING PROBLEMS! PROBLEMS AS USUSAL :))"));
 
     this.saveBeforeLoad = true;
+    this.setSelectionShape();
   }
 
   load() {
@@ -891,8 +893,9 @@ export class AppComponent implements AfterViewInit {
     }
     this.paintService.load().subscribe(() => {
       console.log("No PROBLEM WHILE LOADING!")
-      this.mySelection = undefined;
-      this.mySelectionIndex = -1;
+      // Set mySelection Shape
+      this.setSelectionShape();
+      // Get all the Pieces
       this.getAllShapes();
     }, () => console.log("LOADING PROBLEMS AS USUAL :)")
     )
@@ -901,6 +904,7 @@ export class AppComponent implements AfterViewInit {
   redo() {
     this.paintService.redo().subscribe(() => {
       console.log("Done REDO!")
+      this.setSelectionShape();
       this.getAllShapes();
     }, () => console.log("ERROR! WHAT DO YOU EXPECT!!"))
   }
@@ -908,6 +912,7 @@ export class AppComponent implements AfterViewInit {
   undo() {
     this.paintService.undo().subscribe(() => {
       console.log("Done UNDO!")
+      this.setSelectionShape();
       this.getAllShapes();
     }, () => console.log("ERROR! WHAT DO YOU EXPECT!!"))
   }
