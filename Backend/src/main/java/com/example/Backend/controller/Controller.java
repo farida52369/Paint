@@ -83,3 +83,20 @@ public class Controller {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
+
+
+/*
+ TO TEST THE CONTROLLER USING POSTMAN OR . HTTPIE
+ FOR EXAMPLE WRITE IN THE TERMINAL -- GET IS DEFAULT
+ $http GET http://localhost:8080/employee/allEmployees OR
+ $http GET :8080/employee/allEmployees
+ $http GET :8080/employee/find/1
+ $http POST :8080/employee/add < data.json
+ LET'S ASSUME YOU HAVE A FILE NAMED data.json WHICH HAS THE EMPLOYEE DATA
+ $touch data.json
+ $vim data.json -- PASTE IN THE TEXT EDITOR THE EMPLOYEE DATA
+ $ http PUT :8080/employee/update < data.json
+ $ http DELETE :8080/employee/delete/1
+ AND SEE THE MAGIC WITH YOUR EYES :)
+*/
+
