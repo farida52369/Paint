@@ -1,6 +1,6 @@
 # Paint Web Application
 
-Application developed using 
+Web-Application developed using 
   - Angular v12 (Client Side)
   - Spring boot v2 (Server Side)
   - MYSQL (DB)
