@@ -3,12 +3,9 @@ package com.example.Backend.model.service;
 import com.example.Backend.model.shapes.Shape;
 
 import java.util.List;
-import java.util.UUID;
 
-public interface ISingleton {
+public interface IShapeService {
     void create_shape(Shape shape);
-
-    Shape last_added_shape();
 
     List<Shape> getAll_shapes();
 
@@ -16,11 +13,11 @@ public interface ISingleton {
 
     void undo();
 
-    void copy(UUID id, String dimensions);
+    void copy(Shape shape);
 
-    void move_resize(UUID id, String dimensions, String style);
+    void move_resize(Shape shape);
 
-    void delete(UUID id);
+    void delete(String id);
 
     void new_();
 

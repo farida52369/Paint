@@ -1,9 +1,9 @@
 package com.example.Backend.model.io.xml;
 
-import com.example.Backend.model.service.Singleton;
 import com.example.Backend.model.io.PaintIO;
 import com.example.Backend.model.io.UI;
 import com.example.Backend.model.shapes.Shape;
+import com.example.Backend.model.shapes.ShapeRepo;
 
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
@@ -16,7 +16,10 @@ public class PaintLoaderXml implements PaintIO {
 
     private String path;
 
-    public PaintLoaderXml() {
+    private final ShapeRepo shapeRepo;
+
+    public PaintLoaderXml(ShapeRepo shapeRepo) {
+        this.shapeRepo = shapeRepo;
     }
 
     @Override
@@ -43,7 +46,6 @@ public class PaintLoaderXml implements PaintIO {
 
     @Override
     public boolean save() {
-        Singleton uniqueInstance = Singleton.getInstance();
         setPath();
 
         // SERIALIZE OR ENCODE JAVA OBJECT INTO XML FILE
@@ -54,7 +56,7 @@ public class PaintLoaderXml implements PaintIO {
             if (!targetFile.createNewFile()) return false;
 
             // ADDING ALL THE SHAPES IN THE FILE
-            Shape[] shapes = uniqueInstance.getAll_shapes().toArray(new Shape[0]);
+            Shape[] shapes = shapeRepo.findAll().toArray(new Shape[0]);
 
             // FILE OUT STREAM IS REQUIRED FOR XML_ENCODER
             FileOutputStream fileStream = new FileOutputStream(targetFile);

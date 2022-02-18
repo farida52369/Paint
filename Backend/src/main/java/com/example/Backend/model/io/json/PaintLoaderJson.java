@@ -1,9 +1,9 @@
 package com.example.Backend.model.io.json;
 
-import com.example.Backend.model.service.Singleton;
 import com.example.Backend.model.io.PaintIO;
 import com.example.Backend.model.io.UI;
 import com.example.Backend.model.shapes.Shape;
+import com.example.Backend.model.shapes.ShapeRepo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -17,7 +17,10 @@ public class PaintLoaderJson implements PaintIO {
 
     private String path;
 
-    public PaintLoaderJson() {
+    private final ShapeRepo shapeRepo;
+
+    public PaintLoaderJson(ShapeRepo shapeRepo) {
+        this.shapeRepo = shapeRepo;
     }
 
     @Override
@@ -39,7 +42,6 @@ public class PaintLoaderJson implements PaintIO {
 
     @Override
     public boolean save() {
-        Singleton uniqueInstance = Singleton.getInstance();
         setPath();
 
         File targetFile = new File(path); // CREATING FILE
@@ -50,7 +52,7 @@ public class PaintLoaderJson implements PaintIO {
 
             ObjectMapper objectMapper = new ObjectMapper();
             // ADDING ALL THE SHAPES IN THE FILE
-            Shape[] shape_data = uniqueInstance.getAll_shapes().toArray(new Shape[0]);
+            Shape[] shape_data = shapeRepo.findAll().toArray(new Shape[0]);
             objectMapper.writeValue(targetFile, shape_data);
             return true;
         } catch (IOException e) {

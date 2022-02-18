@@ -1,25 +1,20 @@
-export class Shape {
-    constructor(
-        public id : string,
-        public shapeName: string,
-        public shapeDimension: Dimension,
-        public shapeStyle: Style
-      ) { }
+export interface Shape {
+  id : number,
+  shapeName: string,
+  shapeDimension: Dimension,
+  shapeStyle: Style,
+  shapeCode: string
 }
 
-export class Dimension {
-  constructor(
-    public start_x : number,
-    public start_y : number,
-    public end_x : number,
-    public end_y : number
-  ){}
+export interface Dimension {
+  start_x : number,
+  start_y : number,
+  end_x : number,
+  end_y : number
 }
 
-export class Style {
-  constructor(
-    public strokeStyle : string,
-    public lineWidth : string,
-    public fillStyle : string
-  ) {}
+export interface Style {
+  strokeStyle : string,
+  lineWidth : string,
+  fillStyle : string
 }

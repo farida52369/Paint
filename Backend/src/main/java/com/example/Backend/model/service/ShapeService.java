@@ -6,77 +6,71 @@ import com.example.Backend.model.io.UI;
 import com.example.Backend.model.io.json.PaintLoaderJson;
 import com.example.Backend.model.io.xml.PaintLoaderXml;
 import com.example.Backend.model.shapes.Shape;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.example.Backend.model.shapes.ShapeRepo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.List;
+import java.util.Optional;
 
-public class Singleton implements ISingleton {
-
-    private List<Shape> all_shapes;
-    private static Singleton uniqueInstance;
+@Service
+public class ShapeService implements IShapeService {
 
     // Save & Load Variables
     private UI uiSaveLoad;
     private PaintIO paintIOJson;
     private PaintIO paintIOXml;
 
-    // Command
+    // Command -- FOR UNDO REDO STACK
     private CommandHistory history;
 
-    private Singleton() {
-        this.new_();
+    // SQL -- INSTEAD OF A LIST<SHAPE>
+    private final ShapeRepo shapeRepo;
+
+    @Autowired
+    public ShapeService(ShapeRepo shapeRepo) {
+        this.shapeRepo = shapeRepo;
+        this.helperToNew();
     }
-
-    public static synchronized Singleton getInstance() {
-        if (uniqueInstance == null) {
-            uniqueInstance = new Singleton();
-        }
-        return uniqueInstance;
-    }
-
-
-    public void setAll_shapes(List<Shape> all_shapes) {
-        // All Shapes (set)
-        this.all_shapes = all_shapes;
-    }
-
-    public HashMap<String, Integer> fromJSONToDimension(String JSONString) {
-        return new Gson().fromJson(JSONString,
-                new TypeToken<HashMap<String, Integer>>() {
-                }.getType());
-    }
-
-    public HashMap<String, String> fromJSONToStyle(String JSONString) {
-        return new Gson().fromJson(JSONString,
-                new TypeToken<HashMap<String, String>>() {
-                }.getType());
-    }
-
-
 
     // ExecuteCommand to push the command in the Stack.
     private void executeCommand(Command command) {
         if (command.execute()) {
             history.pushUndo(command);
-            // backup is EMPTY!
         }
     }
 
-    @Override
-    public void create_shape(Shape shape) {
-        executeCommand(new CreateCommand(shape));
+    private void restartTable() {
+        try {
+            // Change The Two Arguments Depending On your SQL
+            Connection connection = DriverManager.getConnection(
+                    "jdbc:mysql://localhost:3306/shapes", "username", "password");
+            Statement statement = connection.createStatement();
+            statement.execute("REPAIR TABLE shapes.shape"); // TO REPAIR THE TABLE CONTINUOUSLY
+            statement.execute("TRUNCATE TABLE shape"); // DELETE ALL THE ENTITIES AND RESET PK
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    @Override
-    public Shape last_added_shape() {
-        return all_shapes.get(all_shapes.size() - 1);
+    private void helperToNew() {
+        // Save & Load Variables Initialization
+        this.uiSaveLoad = new UI();
+        this.paintIOXml = new PaintLoaderXml(shapeRepo);
+        this.paintIOJson = new PaintLoaderJson(shapeRepo);
+
+        // Command
+        this.history = new CommandHistory();
     }
 
     @Override
     public List<Shape> getAll_shapes() {
-        // All Shapes (get)
-        return all_shapes;
+        // shapeRepo.findAll().forEach(System.out::println);
+        return shapeRepo.findAll();
     }
 
     @Override
@@ -85,7 +79,7 @@ public class Singleton implements ISingleton {
 
         Command command = history.popRedo();
         if (command != null) {
-            System.out.println("Undo For ...\n" + command);
+            System.out.println("Redo For ...\n" + command);
             command.redo();
             history.pushUndo(command);
         }
@@ -104,37 +98,36 @@ public class Singleton implements ISingleton {
     }
 
     @Override
-    public void copy(UUID id, String dimensions) {
-        Shape copiedShape = all_shapes.stream()
-                .filter(shape -> shape.getId().equals(id)).findAny().orElse(null);
-
-        assert copiedShape != null;
-        Shape tempCopied = (Shape) copiedShape.clone();
-        tempCopied.setShapeDimension(fromJSONToDimension(dimensions));
-        executeCommand(new CreateCommand(tempCopied));
+    public void create_shape(Shape shape) {
+        // Add Shape Command
+        executeCommand(new CreateCommand(shapeRepo, shape));
     }
 
     @Override
-    public void move_resize(UUID id, String dimensions, String style) {
-        executeCommand(new ChangeCommand(id, fromJSONToDimension(dimensions), fromJSONToStyle(style)));
+    public void copy(Shape shape) {
+        // Copy Command
+        shape.setId(null);
+        executeCommand(new CreateCommand(shapeRepo, shape));
     }
 
     @Override
-    public void delete(UUID id) {
-        executeCommand(new DeleteCommand(id));
+    public void move_resize(Shape shape) {
+        // Move & Resize Command
+        executeCommand(new ChangeCommand(shapeRepo, shape));
+    }
+
+    @Override
+    public void delete(String id) {
+        // Delete Command
+        executeCommand(new DeleteCommand(shapeRepo, id));
     }
 
     @Override
     public void new_() {
-        this.all_shapes = new ArrayList<>();
-
-        // Save & Load Variables Initialization
-        this.uiSaveLoad = new UI();
-        this.paintIOXml = new PaintLoaderXml();
-        this.paintIOJson = new PaintLoaderJson();
-
-        // Command
-        this.history = new CommandHistory();
+        // Clear The DB
+        // shapeRepo.deleteAll();
+        helperToNew();
+        restartTable();
     }
 
     @Override
@@ -154,9 +147,10 @@ public class Singleton implements ISingleton {
                 else if (file.get().equalsIgnoreCase("xml"))
                     shapes = paintIOXml.load();
             }
-            setAll_shapes(new ArrayList<>());
+
+            new_();
             for (Shape shape : shapes) { // DRAW THE SHAPES
-                executeCommand(new CreateCommand(shape));
+                executeCommand(new CreateCommand(shapeRepo, shape));
             }
         }
     }
@@ -176,7 +170,6 @@ public class Singleton implements ISingleton {
                     paintIOJson.save();
                 else if (file.get().equalsIgnoreCase("xml"))
                     paintIOXml.save();
-
             }
         }
     }

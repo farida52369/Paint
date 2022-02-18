@@ -1,6 +1,7 @@
 import { Shape, Dimension, Style } from './shape';
 import { AfterViewInit, Component, HostListener } from '@angular/core';
-import { PaintServiceService } from '../service/paint-service.service';
+import { PaintService } from '../service/paint.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +10,7 @@ import { PaintServiceService } from '../service/paint-service.service';
 })
 export class AppComponent implements AfterViewInit {
 
-  constructor(private paintService: PaintServiceService) { }
+  constructor(private paintService: PaintService) { }
 
   // Canvas and Context
   canvas: any = null;
@@ -45,7 +46,8 @@ export class AppComponent implements AfterViewInit {
   // From Shapes Bar -- Selected Shape
   selectedShape: string = '';
   hasSelectedShape: boolean = false;
-
+  sendMoveToBackEndVar: boolean = false;
+  
   // alert
   saveBeforeLoad: boolean = true
 
@@ -99,6 +101,10 @@ export class AppComponent implements AfterViewInit {
     this.sizeCanvas();
     this.imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
 
+    // BD Work
+    this.getAllShapes();
+    this.drawCanvas(this.ctx);
+
     [this.canvas, this.ghostCanvas].forEach((ele) => {
 
       ele.addEventListener("mousedown", (e: any) => {
@@ -151,7 +157,10 @@ export class AppComponent implements AfterViewInit {
           this.saveBeforeLoad = false;
         }  
         // If Moving ?!
-        this.sendMovedShapeToBackend();
+        setTimeout(() => {
+          this.sendMovedShapeToBackend();
+          this.sendMoveToBackEndVar = false;
+        }, 40);
 
         this.isDrag = false;
         this.isResizeDrag = false;
@@ -178,7 +187,7 @@ export class AppComponent implements AfterViewInit {
 
         this.arr[this.mySelectionIndex] = this.mySelection;
         this.drawCanvas(this.ghostCtx);
-
+        this.sendMoveToBackEndVar = true;
       } else if (this.isResizeDrag) {
         // 0  1  2
         // 3     4
@@ -246,6 +255,7 @@ export class AppComponent implements AfterViewInit {
         }
         this.arr[this.mySelectionIndex] = this.mySelection;
         this.drawCanvas(this.ghostCtx);
+        this.sendMoveToBackEndVar = true;
         // console.log("ARE YOU ENTERING HERE!! AHH YA 2LABY");
       }
     }
@@ -480,7 +490,8 @@ export class AppComponent implements AfterViewInit {
       shapeName: this.shapeName,
       shapeDimension: this.dimensions,
       shapeStyle: this.style,
-      id: ''
+      id: 0,
+      shapeCode: ''
     })
     this.postingShape();
 
@@ -494,24 +505,23 @@ export class AppComponent implements AfterViewInit {
     let data = {
       shapeName: this.shapeName,
       shapeDimension: this.dimensions,
-      shapeStyle: this.style
+      shapeStyle: this.style,
     }
 
     this.paintService.create_shape(data).subscribe(
-      (response) => {
-        response = JSON.parse(JSON.stringify(response))
-        this.arr[this.arr.length - 1] = response;
+      () => {
+        this.getAllShapes();
         console.log("I DID MY JOB AND POST THE SHAPE TO THE BACKEND: )")
-      }, () => console.log("7AZ AWFR EL MARA EL GAYA!!")
+      }, (error: HttpErrorResponse) => console.log("7AZ AWFR EL MARA EL GAYA!!\nError: " + error)
     )
   }
 
   sendMovedShapeToBackend() {
     // Wait .......
     if (this.mySelection !== undefined) {
-      this.paintService.move(this.mySelection.id, this.mySelection.shapeDimension, this.mySelection.shapeStyle).subscribe(
+      this.paintService.move(this.mySelection).subscribe(
       () => console.log("WE'VE MOVED THE SHAPE IN THE BACKEND :)") // Fall back into place
-      ,() => console.log("I'M NOT GOING TO FALL BACK INTO PLACE!")
+      ,(error: HttpErrorResponse) => console.log("I'M NOT GOING TO FALL BACK INTO PLACE!\nError: " + error)
       ); // End of subscribe 
     }
   }
@@ -519,10 +529,11 @@ export class AppComponent implements AfterViewInit {
   // GETTING ALL SHAPES FROM THE BACKEND
   getAllShapes() {
     this.paintService.getAllShapes().subscribe(
-      (response) => {
+      (response: Shape[]) => {
+        console.log('The Length: ' +  response.length)
         this.arr = response
         this.drawCanvas(this.ctx)
-      }, () => console.error("7AZ AWFER EL MARA EL GAYA!")
+      }, (error: HttpErrorResponse) => console.error("7AZ AWFER EL MARA EL GAYA!\nError: " + error)
     )
   }
 
@@ -790,6 +801,11 @@ export class AppComponent implements AfterViewInit {
     this.is_resize_move = false;
   }
 
+  setNoShapeSelected() {
+    this.hasSelectedShape = false;
+    this.selectedShape = ''
+  }
+
   setSelectedShape(shape: string) {
     this.drawCanvas(this.ctx);
     this.hasSelectedShape = true;
@@ -834,9 +850,9 @@ export class AppComponent implements AfterViewInit {
       this.arr.splice(this.mySelectionIndex, 1);
       this.drawCanvas(this.ctx);
 
-      this.paintService.delete(this.mySelection.id).subscribe(
+      this.paintService.delete(this.mySelection.shapeCode).subscribe(
         () => console.log('DONE DELETION BACKEND!')
-        , () => console.log("ERROR! WHILE DELETEION")
+        , (error: HttpErrorResponse) => console.log("ERROR! WHILE DELETEION\nError: " + error)
       ) // End Service..
 
       // Set mySelectionShape
@@ -855,14 +871,11 @@ export class AppComponent implements AfterViewInit {
       this.arr.push(shape);
       this.drawCanvas(this.ctx);
 
-      this.paintService.copy(shape.id, shape.shapeDimension).subscribe(
-        (response) => {
-          response = JSON.parse(JSON.stringify(response))
-          this.arr[this.arr.length - 1] = response;
+      this.paintService.copy(shape).subscribe(
+        () => {
+          this.getAllShapes();
           console.log("I DID MY JOB AND COPIED THE SHAPE TO THE BACKEND: )");
-          console.log("The Shape: " + response.shapeName);
-        },
-        () => console.log("7AZ AWFR EL MARA EL GAYA!!")
+        }, (error: HttpErrorResponse) => console.log("7AZ AWFR EL MARA EL GAYA!!\nError: " + error)
       ); // End of Service
 
       this.setSelectionShape();
@@ -877,13 +890,13 @@ export class AppComponent implements AfterViewInit {
       () => {
         console.log("NEW DRAWING ON THE WAY!")
         this.getAllShapes();
-      }, () => console.log('Fred, YOU BROKE MY HEART ..')
+      }, (error: HttpErrorResponse) => console.log('Fred, YOU BROKE MY HEART ..\nError: ' + error)
     )
   }
 
   save() {
     this.paintService.save().subscribe(() => console.log("No PEOBLEM WHILE SAVING!")
-      , () => console.log("SAVING PROBLEMS! PROBLEMS AS USUSAL :))"));
+      , (error: HttpErrorResponse) => console.log("SAVING PROBLEMS! PROBLEMS AS USUSAL :))\nError: " + error));
 
     this.saveBeforeLoad = true;
     this.setSelectionShape();
@@ -899,7 +912,7 @@ export class AppComponent implements AfterViewInit {
       this.setSelectionShape();
       // Get all the Pieces
       this.getAllShapes();
-    }, () => console.log("LOADING PROBLEMS AS USUAL :)")
+    }, (error: HttpErrorResponse) => console.log("LOADING PROBLEMS AS USUAL :)\nError: " + error)
     )
   }
 
@@ -908,7 +921,9 @@ export class AppComponent implements AfterViewInit {
       console.log("Done REDO!")
       this.setSelectionShape();
       this.getAllShapes();
-    }, () => console.log("ERROR! WHAT DO YOU EXPECT!!"))
+    }, (error: HttpErrorResponse) => console.log("ERROR! WHAT DO YOU EXPECT!!\nError: " + error))
+    
+    this.setNoShapeSelected();
   }
 
   undo() {
@@ -916,7 +931,9 @@ export class AppComponent implements AfterViewInit {
       console.log("Done UNDO!")
       this.setSelectionShape();
       this.getAllShapes();
-    }, () => console.log("ERROR! WHAT DO YOU EXPECT!!"))
+    }, (error: HttpErrorResponse) => console.log("ERROR! WHAT DO YOU EXPECT!!\nError: " + error))
+
+    this.setNoShapeSelected();
   }
 
   // Host Listener For basic Operations

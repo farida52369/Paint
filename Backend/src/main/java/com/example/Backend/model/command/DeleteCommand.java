@@ -1,29 +1,36 @@
 package com.example.Backend.model.command;
 
 import com.example.Backend.model.shapes.Shape;
-
-import java.util.UUID;
+import com.example.Backend.model.shapes.ShapeRepo;
 
 public class DeleteCommand extends Command {
 
-    private final Shape shape;
+    private final String id;
+    private Shape shape;
 
-    public DeleteCommand(UUID id) {
-        this.shape = singleton.getAll_shapes().stream()
-                .filter(shape -> shape.getId().equals(id)).findAny().orElse(null);
+    public DeleteCommand(ShapeRepo shapeRepo, String id) {
+        super(shapeRepo);
+        this.id = id;
     }
 
     @Override
     public void undo() {
-        System.out.println("Adding (Undo Deleting) ... " + shape);
-        singleton.getAll_shapes().add(shape);
+        Shape undoDelete = shape.clone();
+        // undoDelete.setId(null); // To get new Primary Key
+        shapeRepo.save(undoDelete);
+
+        System.out.println("Adding (Undo Deleting) ... \n" + undoDelete);
     }
 
     @Override
     public boolean execute() {
+        Shape shapeToDelete = shapeRepo.findByShapeCode(id);
 
-        System.out.println("Deleting Shape ...\n" + shape);
-        singleton.getAll_shapes().remove(shape);
+        // For undo
+        shape = shapeToDelete.clone(); // Hard Copy
+        shapeRepo.delete(shapeToDelete);
+
+        System.out.println("Deleting Shape ...\n" + shapeToDelete);
         return true;
     }
 }

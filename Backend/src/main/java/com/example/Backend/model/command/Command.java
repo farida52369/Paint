@@ -1,12 +1,17 @@
 package com.example.Backend.model.command;
 
-import com.example.Backend.model.service.Singleton;
+import com.example.Backend.model.shapes.ShapeRepo;
 
 public abstract class Command {
 
-    public Singleton singleton = Singleton.getInstance();
+    public final ShapeRepo shapeRepo;
 
-    public void redo(){
+    public Command(ShapeRepo shapeRepo) {
+        this.shapeRepo = shapeRepo;
+    }
+
+    public void redo() {
+        // Redo Command
         execute();
     }
 
@@ -16,6 +21,7 @@ public abstract class Command {
 
     @Override
     public String toString() {
+        //
         return "Command Type: " + this.getClass().getSimpleName();
     }
 }

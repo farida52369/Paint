@@ -1,76 +1,85 @@
 package com.example.Backend.controller;
 
 
-import com.example.Backend.model.service.ISingleton;
-import com.example.Backend.model.service.Singleton;
+import com.example.Backend.model.service.IShapeService;
+import com.example.Backend.model.service.ShapeService;
 import com.example.Backend.model.shapes.Shape;
+import com.example.Backend.model.shapes.ShapeRepo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@RequestMapping("/paint")
 public class Controller {
 
-    ISingleton singleton = Singleton.getInstance();
+    private final IShapeService shapeService;
+
+    @Autowired
+    public Controller(ShapeRepo shapeRepo) {
+        this.shapeService = new ShapeService(shapeRepo);
+    }
 
     @RequestMapping(value = "/shape", method = RequestMethod.POST)
-    public Shape getShape(@RequestBody Shape shape) {
-        singleton.create_shape(shape);
-        return singleton.last_added_shape();
+    public ResponseEntity<Shape> getShape(@RequestBody Shape shape) {
+        shapeService.create_shape(shape);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/shapes", method = RequestMethod.GET)
-    public List<Shape> getAllShapes() {
-        return singleton.getAll_shapes();
+    public ResponseEntity<List<Shape>> getAllShapes() {
+        return new ResponseEntity<>(shapeService.getAll_shapes(), HttpStatus.OK);
     }
 
 
     @RequestMapping(value = "/copy", method = RequestMethod.POST)
-    public Shape copy(@RequestParam(value = "id") String id,
-                      @RequestParam(value = "dimension") String dimension) {
-        UUID uuid = UUID.fromString(id);
-        singleton.copy(uuid, dimension);
-        return singleton.last_added_shape();
+    public ResponseEntity<?> copy(@RequestBody Shape shape) {
+        shapeService.copy(shape);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/move", method = RequestMethod.POST)
-    public void move(@RequestParam(value = "id") String id,
-                     @RequestParam(value = "dimension") String dimension,
-                     @RequestParam(value = "style") String style) {
-        UUID uuid = UUID.fromString(id);
-        singleton.move_resize(uuid, dimension, style);
+    @RequestMapping(value = "/move", method = RequestMethod.PUT)
+    public ResponseEntity<?> move(@RequestBody Shape shape) {
+        shapeService.move_resize(shape);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
-    public void delete(@RequestParam(value = "id") String id) {
-        UUID uuid = UUID.fromString(id);
-        singleton.delete(uuid);
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> delete(@PathVariable(value = "id") String id) {
+        shapeService.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/undo", method = RequestMethod.GET)
-    public void undo() { // I KNOW DEFAULT FOR REQUEST IS GET BUT FOR EASINESS:)
-        singleton.undo();
+    public ResponseEntity<?> undo() { // I KNOW DEFAULT FOR REQUEST IS GET BUT FOR EASINESS:)
+        shapeService.undo();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/redo", method = RequestMethod.GET)
-    public void redo() {
-        singleton.redo();
+    public ResponseEntity<?> redo() {
+        shapeService.redo();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
-    public void new_() {
-        singleton.new_();
+    public ResponseEntity<?> new_() {
+        shapeService.new_();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.GET)
-    public void save() {
-        singleton.save();
+    public ResponseEntity<?> save() {
+        shapeService.save();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/load", method = RequestMethod.GET)
-    public void load() {
-        singleton.load();
+    public ResponseEntity<?> load() {
+        shapeService.load();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -1,15 +1,24 @@
 package com.example.Backend.model.shapes;
 
+import javax.persistence.*;
+import java.io.Serializable;
 import java.util.HashMap;
-import java.util.UUID;
 
+@Entity
+@Table(name = "shape")
+public class Shape implements Serializable, Cloneable {
 
-public class Shape implements Cloneable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false, updatable = false)
+    private Long id;
 
+    @Column(nullable = false, updatable = false, length = 20)
     private String shapeName;
+
     private HashMap<String, Integer> shapeDimension;
     private HashMap<String, String> shapeStyle;
-    private UUID id;
+    private String shapeCode;
 
     // FOR XML DECODER AND ENCODER
     public Shape() {
@@ -21,6 +30,16 @@ public class Shape implements Cloneable {
         this.shapeName = shapeName;
         this.shapeDimension = shapeDimension;
         this.shapeStyle = shapeStyle;
+    }
+
+    public Long getId() {
+        // Shape ID (get)
+        return id;
+    }
+
+    public void setId(Long id) {
+        // Shape ID (set)
+        this.id = id;
     }
 
 
@@ -54,35 +73,35 @@ public class Shape implements Cloneable {
         this.shapeStyle = shapeStyle;
     }
 
-    public UUID getId() {
-        // Shape ID (get)
-        return id;
+    public String getShapeCode() {
+        return shapeCode;
     }
 
-    public void setId(UUID id) {
-        // Shape ID (set)
-        this.id = id;
+    public void setShapeCode(String shapeCode) {
+        this.shapeCode = shapeCode;
     }
 
-    public Object clone() {
+    @Override
+    public Shape clone() {
         try {
-            return super.clone();
+            return (Shape) super.clone();
         } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-            return null;
+            throw new AssertionError();
         }
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Shape Name: ").append(shapeName).append("\nShape ID: ").append(id);
+        StringBuilder sb = new StringBuilder("\n...... Shape ......\n");
+        sb.append("Shape Name: ").append(shapeName).append("\nShape PK in DB: ").append(id);
 
         sb.append("\nShape Dimensions:\n");
         shapeDimension.forEach((key, value) -> sb.append(key).append(": ").append(value).append("\n"));
 
         sb.append("Shape Style:\n");
         shapeStyle.forEach((key, value) -> sb.append(key).append(": ").append(value).append("\n"));
+
+        sb.append("Shape Code (ID): ").append(shapeCode);
         return sb.toString();
     }
 }
