@@ -1,7 +1,4 @@
-import { IShape } from "./IShape";
-import { Dimension, Shape, Style } from "../ShapeAttr";
-import { ShapeName } from "../ShapeName";
-
+import { Dimension, Shape, Style, ShapeName, IShape } from "../Shape";
 export class Ellipse extends IShape {
 
     private dimension: Dimension

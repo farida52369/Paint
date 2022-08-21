@@ -1,9 +1,8 @@
-import { Shape, Dimension, Style } from './shapes_factory/ShapeAttr';
+import { Shape, Dimension, Style, ShapeName } from './shapes_factory/Shape';
 import { AfterViewInit, Component, HostListener } from '@angular/core';
 import { PaintService } from '../service/paint.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ShapeFactory } from './shapes_factory/ShapeFactory';
-import { ShapeName } from './shapes_factory/ShapeName';
 
 @Component({
   selector: 'app-root',
