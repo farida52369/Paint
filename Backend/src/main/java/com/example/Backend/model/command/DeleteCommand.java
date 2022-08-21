@@ -24,7 +24,7 @@ public class DeleteCommand extends Command {
 
     @Override
     public boolean execute() {
-        Shape shapeToDelete = shapeRepo.findByShapeCode(id);
+        Shape shapeToDelete = shapeRepo.findByCode(id);
 
         // For undo
         shape = shapeToDelete.clone(); // Hard Copy

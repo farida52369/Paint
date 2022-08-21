@@ -32,27 +32,27 @@ class SimpleShapeServiceTest {
         assertEquals(shapeService.getAll_shapes().size(), 0);
 
         HashMap<String, Integer> dimensions = new HashMap<>();
-        dimensions.put("start_x", 100);
-        dimensions.put("start_y", 150);
-        dimensions.put("end_x", 300);
-        dimensions.put("end_y", 240);
+        dimensions.put("x_1", 100);
+        dimensions.put("y_1", 150);
+        dimensions.put("x_2", 300);
+        dimensions.put("y_2", 240);
 
         HashMap<String, String> styles = new HashMap<>();
-        styles.put("strokeStyle", "#fff");
-        styles.put("fillStyle", "#ccc");
-        styles.put("lineWidth", "2");
+        styles.put("stroke_style", "#fff");
+        styles.put("fill_style", "#ccc");
+        styles.put("line_width", "2");
         Shape currentShape = new Shape("circle", dimensions, styles);
 
         HashMap<String, Integer> dimensions_ = new HashMap<>();
-        dimensions_.put("start_x", 10);
-        dimensions_.put("start_y", 1550);
-        dimensions_.put("end_x", 20);
-        dimensions_.put("end_y", 4440);
+        dimensions_.put("x_1", 10);
+        dimensions_.put("y_1", 1550);
+        dimensions_.put("x_2", 20);
+        dimensions_.put("y_2", 4440);
 
         HashMap<String, String> styles_ = new HashMap<>();
-        styles_.put("strokeStyle", "#fcf");
-        styles_.put("fillStyle", "#cdc");
-        styles_.put("lineWidth", "3");
+        styles_.put("stroke_style", "#fcf");
+        styles_.put("fill_style", "#cdc");
+        styles_.put("line_width", "3");
         Shape currentShape_ = new Shape("triangle", dimensions_, styles_);
 
         shapeService.create_shape(currentShape);
@@ -61,15 +61,15 @@ class SimpleShapeServiceTest {
         // We have Created Two Shapes
         assertEquals(shapeService.getAll_shapes().size(), 2);
 
-        assertNotNull(currentShape.getShapeCode());
-        assertNotNull(currentShape_.getShapeCode());
+        assertNotNull(currentShape.getCode());
+        assertNotNull(currentShape_.getCode());
 
-        String id = currentShape.getShapeCode();
-        String id_ = currentShape_.getShapeCode();
+        String id = currentShape.getCode();
+        String id_ = currentShape_.getCode();
 
         // They Already Exist Now in the DataBase
-        assertNotNull(shapeRepo.findByShapeCode(id));
-        assertNotNull(shapeRepo.findByShapeCode(id_));
+        assertNotNull(shapeRepo.findByCode(id));
+        assertNotNull(shapeRepo.findByCode(id_));
     }
 
     @Test
@@ -81,12 +81,12 @@ class SimpleShapeServiceTest {
         Shape current = shapeRepo.getById(1L);
         Shape current_ = shapeRepo.getById(2L);
 
-        shapeService.delete(current.getShapeCode());
+        shapeService.delete(current.getCode());
         // We have Deleted One Shape NOW
         assertEquals(shapeService.getAll_shapes().size(), 1);
-        assertNotNull(shapeRepo.findByShapeCode(current_.getShapeCode()));
+        assertNotNull(shapeRepo.findByCode(current_.getCode()));
 
-        shapeService.delete(current_.getShapeCode());
+        shapeService.delete(current_.getCode());
         // We have Nothing NOW
         assertEquals(shapeService.getAll_shapes().size(), 0);
 
@@ -94,16 +94,16 @@ class SimpleShapeServiceTest {
         shapeService.undo();
         assertEquals(shapeService.getAll_shapes().size(), 1);
         assertNotNull(shapeRepo.getById(3L));
-        assertEquals(shapeRepo.getById(3L).getShapeCode(), current_.getShapeCode());
-        assertEquals(shapeRepo.getById(3L).getShapeDimension(), current_.getShapeDimension());
-        assertEquals(shapeRepo.getById(3L).getShapeStyle(), current_.getShapeStyle());
+        assertEquals(shapeRepo.getById(3L).getCode(), current_.getCode());
+        assertEquals(shapeRepo.getById(3L).getDimension(), current_.getDimension());
+        assertEquals(shapeRepo.getById(3L).getStyle(), current_.getStyle());
 
         shapeService.undo();
         assertEquals(shapeService.getAll_shapes().size(), 2);
         assertNotNull(shapeRepo.getById(4L));
-        assertEquals(shapeRepo.getById(4L).getShapeCode(), current.getShapeCode());
-        assertEquals(shapeRepo.getById(4L).getShapeDimension(), current.getShapeDimension());
-        assertEquals(shapeRepo.getById(4L).getShapeStyle(), current.getShapeStyle());
+        assertEquals(shapeRepo.getById(4L).getCode(), current.getCode());
+        assertEquals(shapeRepo.getById(4L).getDimension(), current.getDimension());
+        assertEquals(shapeRepo.getById(4L).getStyle(), current.getStyle());
 
         // Redo Test For Deletion
         shapeService.redo();
@@ -123,22 +123,22 @@ class SimpleShapeServiceTest {
 
         // Copy Current Shape __ Shallow Copies everyWhere __ Watch OUT
         HashMap<String, Integer> dimensions = new HashMap<>();
-        dimensions.put("start_x", current.getShapeDimension().get("start_x") + 10);
-        dimensions.put("start_y", current.getShapeDimension().get("start_y") + 10);
-        dimensions.put("end_x", current.getShapeDimension().get("end_x") + 10);
-        dimensions.put("end_y", current.getShapeDimension().get("end_y") + 10);
+        dimensions.put("x_1", current.getDimension().get("x_1") + 10);
+        dimensions.put("y_1", current.getDimension().get("y_1") + 10);
+        dimensions.put("x_2", current.getDimension().get("x_2") + 10);
+        dimensions.put("y_2", current.getDimension().get("y_2") + 10);
 
-        Shape copiedShape = new Shape(current.getShapeName(), dimensions, current.getShapeStyle());
+        Shape copiedShape = new Shape(current.getName(), dimensions, current.getStyle());
         copiedShape.setId(current.getId());
-        copiedShape.setShapeCode(current.getShapeCode());
+        copiedShape.setCode(current.getCode());
 
         shapeService.copy(copiedShape);
 
         // Check if We have Done The Job (COPY) properly
         assertNotEquals(copiedShape.getId(), current.getId());
-        assertNotEquals(copiedShape.getShapeCode(), current.getShapeCode());
-        assertNotEquals(copiedShape.getShapeDimension().values(), current.getShapeDimension().values());
-        assertEquals(copiedShape.getShapeStyle().values(), current.getShapeStyle().values());
+        assertNotEquals(copiedShape.getCode(), current.getCode());
+        assertNotEquals(copiedShape.getDimension().values(), current.getDimension().values());
+        assertEquals(copiedShape.getStyle().values(), current.getStyle().values());
         assertEquals(shapeService.getAll_shapes().size(), 3);
         assertEquals(copiedShape, shapeRepo.getById(3L));
 
@@ -149,7 +149,7 @@ class SimpleShapeServiceTest {
         // TEST for REDO copy Command
         shapeService.redo(); // Return Family of three
         assertEquals(shapeService.getAll_shapes().size(), 3);
-        assertEquals(shapeRepo.findByShapeCode(copiedShape.getShapeCode()), shapeRepo.getById(4L));
+        assertEquals(shapeRepo.findByCode(copiedShape.getCode()), shapeRepo.getById(4L));
     }
 
     @Test
@@ -162,42 +162,42 @@ class SimpleShapeServiceTest {
 
         // Take Action Move For Current Shape
         HashMap<String, Integer> dimensions = new HashMap<>();
-        dimensions.put("start_x", 444);
-        dimensions.put("start_y", 333);
-        dimensions.put("end_x", 222);
-        dimensions.put("end_y", 444);
+        dimensions.put("x_1", 444);
+        dimensions.put("y_1", 333);
+        dimensions.put("x_2", 222);
+        dimensions.put("y_2", 444);
 
         HashMap<String, String> styles = new HashMap<>();
-        styles.put("strokeStyle", "#fcdf");
-        styles.put("fillStyle", "#cdca");
-        styles.put("lineWidth", "5");
+        styles.put("stroke_style", "#fcdf");
+        styles.put("fill_style", "#cdca");
+        styles.put("line_width", "5");
 
-        Shape movedShape = new Shape(current.getShapeName(), dimensions, styles);
+        Shape movedShape = new Shape(current.getName(), dimensions, styles);
         movedShape.setId(current.getId());
-        movedShape.setShapeCode(current.getShapeCode());
+        movedShape.setCode(current.getCode());
 
         shapeService.move_resize(movedShape);
         // Test After MOVING SHAPE
         assertEquals(shapeService.getAll_shapes().size(), 2);
         assertEquals(shapeRepo.getById(1L).getId(), current.getId());
-        assertEquals(shapeRepo.getById(1L).getShapeCode(), current.getShapeCode());
-        assertNotEquals(shapeRepo.getById(1L).getShapeDimension().values(), current.getShapeDimension().values());
-        assertNotEquals(shapeRepo.getById(1L).getShapeStyle().values(), current.getShapeStyle().values());
+        assertEquals(shapeRepo.getById(1L).getCode(), current.getCode());
+        assertNotEquals(shapeRepo.getById(1L).getDimension().values(), current.getDimension().values());
+        assertNotEquals(shapeRepo.getById(1L).getStyle().values(), current.getStyle().values());
 
         // UNDO For MOVING Command
         shapeService.undo();
         assertEquals(shapeService.getAll_shapes().size(), 2);
         assertEquals(shapeRepo.getById(1L).getId(), current.getId());
-        assertEquals(shapeRepo.getById(1L).getShapeCode(), current.getShapeCode());
-        assertEquals(shapeRepo.getById(1L).getShapeDimension().values(), current.getShapeDimension().values());
-        assertEquals(shapeRepo.getById(1L).getShapeStyle().values(), current.getShapeStyle().values());
+        assertEquals(shapeRepo.getById(1L).getCode(), current.getCode());
+        assertEquals(shapeRepo.getById(1L).getDimension().values(), current.getDimension().values());
+        assertEquals(shapeRepo.getById(1L).getStyle().values(), current.getStyle().values());
 
         // REDO for MOVING Command
         shapeService.redo();
         assertEquals(shapeService.getAll_shapes().size(), 2);
         assertEquals(shapeRepo.getById(1L).getId(), movedShape.getId());
-        assertEquals(shapeRepo.getById(1L).getShapeCode(), movedShape.getShapeCode());
-        assertEquals(shapeRepo.getById(1L).getShapeDimension().values(), movedShape.getShapeDimension().values());
-        assertEquals(shapeRepo.getById(1L).getShapeStyle().values(), movedShape.getShapeStyle().values());
+        assertEquals(shapeRepo.getById(1L).getCode(), movedShape.getCode());
+        assertEquals(shapeRepo.getById(1L).getDimension().values(), movedShape.getDimension().values());
+        assertEquals(shapeRepo.getById(1L).getStyle().values(), movedShape.getStyle().values());
     }
 }

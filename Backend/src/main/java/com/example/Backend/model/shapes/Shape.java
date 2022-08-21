@@ -14,71 +14,62 @@ public class Shape implements Serializable, Cloneable {
     private Long id;
 
     @Column(nullable = false, updatable = false, length = 20)
-    private String shapeName;
+    private String name;
 
-    private HashMap<String, Integer> shapeDimension;
-    private HashMap<String, String> shapeStyle;
-    private String shapeCode;
+    private HashMap<String, Integer> dimension;
+    private HashMap<String, String> style;
+    private String code;
 
     // FOR XML DECODER AND ENCODER
     public Shape() {
     }
 
-    public Shape(String shapeName,
-                 HashMap<String, Integer> shapeDimension,
-                 HashMap<String, String> shapeStyle) {
-        this.shapeName = shapeName;
-        this.shapeDimension = shapeDimension;
-        this.shapeStyle = shapeStyle;
+    public Shape(String name,
+                 HashMap<String, Integer> dimension,
+                 HashMap<String, String> style) {
+        this.name = name;
+        this.dimension = dimension;
+        this.style = style;
     }
 
     public Long getId() {
-        // Shape ID (get)
         return id;
     }
 
     public void setId(Long id) {
-        // Shape ID (set)
         this.id = id;
     }
 
-
-    public String getShapeName() {
-        // Shape Name (get)
-        return this.shapeName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setShapeName(String shapeName) {
-        // Shape Name (set)
-        this.shapeName = shapeName;
+    public String getName() {
+        return this.name;
     }
 
-    public HashMap<String, Integer> getShapeDimension() {
-        // Shape Dimension (get)
-        return shapeDimension;
+    public HashMap<String, Integer> getDimension() {
+        return dimension;
     }
 
-    public void setShapeDimension(HashMap<String, Integer> shapeDimension) {
-        // Shape Dimension (set)
-        this.shapeDimension = shapeDimension;
+    public void setDimension(HashMap<String, Integer> dimension) {
+        this.dimension = dimension;
     }
 
-    public HashMap<String, String> getShapeStyle() {
-        // Shape Style (get)
-        return shapeStyle;
+    public HashMap<String, String> getStyle() {
+        return style;
     }
 
-    public void setShapeStyle(HashMap<String, String> shapeStyle) {
-        // Shape Style (set)
-        this.shapeStyle = shapeStyle;
+    public void setStyle(HashMap<String, String> style) {
+        this.style = style;
     }
 
-    public String getShapeCode() {
-        return shapeCode;
+    public String getCode() {
+        return code;
     }
 
-    public void setShapeCode(String shapeCode) {
-        this.shapeCode = shapeCode;
+    public void setCode(String code) {
+        this.code = code;
     }
 
     @Override
@@ -93,15 +84,15 @@ public class Shape implements Serializable, Cloneable {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("\n...... Shape ......\n");
-        sb.append("Shape Name: ").append(shapeName).append("\nShape PK in DB: ").append(id);
+        sb.append("Shape Name: ").append(name).append("\nShape PK in DB: ").append(id);
 
         sb.append("\nShape Dimensions:\n");
-        shapeDimension.forEach((key, value) -> sb.append(key).append(": ").append(value).append("\n"));
+        dimension.forEach((key, value) -> sb.append(key).append(": ").append(value).append("\n"));
 
         sb.append("Shape Style:\n");
-        shapeStyle.forEach((key, value) -> sb.append(key).append(": ").append(value).append("\n"));
+        style.forEach((key, value) -> sb.append(key).append(": ").append(value).append("\n"));
 
-        sb.append("Shape Code (ID): ").append(shapeCode);
+        sb.append("Shape Code (ID): ").append(code).append("\n\n");
         return sb.toString();
     }
 }

@@ -13,16 +13,16 @@ public class CreateCommand extends Command {
     public CreateCommand(ShapeRepo shapeRepo, Shape shape) {
         super(shapeRepo);
         // this.shape = ShapeFactory.createShape(shape);
-        shape.setShapeCode(UUID.randomUUID().toString());
+        shape.setCode(UUID.randomUUID().toString());
 
-        this.id = shape.getShapeCode();
+        this.id = shape.getCode();
         this.shape = shape;
     }
 
     @Override
     public void undo() {
         // shapeRepo.findById(shape.getId()).ifPresent(shapeRepo::delete);
-        shapeRepo.delete(shapeRepo.findByShapeCode(id));
+        shapeRepo.delete(shapeRepo.findByCode(id));
 
         System.out.println("Removing Shape (Undo Creating) ...\n" + shape);
     }

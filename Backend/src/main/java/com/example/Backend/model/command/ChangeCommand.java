@@ -12,15 +12,15 @@ public class ChangeCommand extends Command {
 
     public ChangeCommand(ShapeRepo shapeRepo, Shape shape) {
         super(shapeRepo);
-        this.id = shape.getShapeCode();
+        this.id = shape.getCode();
         this.shape = shape;
     }
 
     @Override
     public void undo() {
-        Shape shape = shapeRepo.findByShapeCode(id);
-        shape.setShapeDimension(changedShape.getShapeDimension());
-        shape.setShapeStyle(changedShape.getShapeStyle());
+        Shape shape = shapeRepo.findByCode(id);
+        shape.setDimension(changedShape.getDimension());
+        shape.setStyle(changedShape.getStyle());
         shapeRepo.save(shape);
 
         System.out.println("Undo Moving or Resizing (Changed) Shape ...\n" + shape);
@@ -28,13 +28,13 @@ public class ChangeCommand extends Command {
 
     @Override
     public boolean execute() {
-        Shape movedShape = shapeRepo.findByShapeCode(id);
+        Shape movedShape = shapeRepo.findByCode(id);
 
         // For undo
         changedShape = movedShape.clone();
 
-        movedShape.setShapeDimension(shape.getShapeDimension());
-        movedShape.setShapeStyle(shape.getShapeStyle());
+        movedShape.setDimension(shape.getDimension());
+        movedShape.setStyle(shape.getStyle());
         shapeRepo.save(movedShape);
 
         System.out.println("Moving or Resizing (Original) Shape ...\n" + movedShape);
